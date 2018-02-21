@@ -50,7 +50,7 @@ $(function () {
     var map = new ol.Map({
         target: 'map',
         layers: [
-            // osmLayer,
+            osmLayer,
             googleLayer,
             vectorLayer
         ],
