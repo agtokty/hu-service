@@ -1,0 +1,93 @@
+<style>
+    .form-simple input[type=text] {
+        margin-bottom: -1px;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0
+    }
+    
+    .form-simple input[type=mail] {
+        margin-bottom: -1px;
+        border-radius: 0
+    }
+    
+    .form-simple input[type=password] {
+        margin-bottom: 10px;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0
+    }
+    
+    .help-block ul {
+        margin: 0!important;
+        padding: 0!important
+    }
+    
+    .help-block ul li {
+        list-style: none
+    }
+</style>
+<section class="flexbox-container">
+    <div class="col-md-4 offset-md-4 col-xs-10 offset-xs-1  box-shadow-2 p-0">
+        <div class="card border-grey border-lighten-3 m-0">
+            <div class="card-header no-border">
+                <div class="card-title text-xs-center">
+                    <div class="p-1"><img src="/images/logo.jpg" alt="Hacettepe Üniversitesi"></div>
+                </div>
+                <h6 class="card-subtitle line-on-side text-muted text-xs-center font-small-3 pt-2"><span>Hacettepe Üniversitesi</span></h6>
+            </div>
+            <div class="card-body collapse in">
+                <div class="card-block">
+                    <form class="form-horizontal form-simple" action="/secure/login" method="POST">
+                        <!--<input type="text" class="form-control form-control-lg input-lg" id="username2" placeholder="Kullanıcı Adınız" required>-->
+                        <fieldset class="form-group position-relative has-icon-left mb-0">
+                            <input type="text" class="form-control form-control-lg input-lg" id="username" name="username" placeholder="Kullanıcı Adınız" required>
+                            <div class="form-control-position">
+                                <i class="ft-user"></i>
+                            </div>
+                        </fieldset>
+                        <fieldset class="form-group position-relative has-icon-left">
+                            <input type="password" class="form-control form-control-lg input-lg" id="password" name="password" placeholder="Parolanız" required>
+                            <div class="form-control-position">
+                                <i class="fa fa-key"></i>
+                            </div>
+                        </fieldset>
+                        <!-- <fieldset class="form-group row">
+                            <div class="col-md-6 col-xs-12 text-xs-center text-md-left">
+                                <fieldset>
+                                    <input type="checkbox" id="rememberme" name="rememberme" class="chk-remember">
+                                    <label for="rememberme"> Beni Hatırla</label>
+                                </fieldset>
+                            </div>
+                             <div class="col-md-6 col-xs-12 text-xs-center text-md-right"><a href="recover-password.html" class="card-link">Forgot Password?</a></div> 
+                        </fieldset> -->
+                        <input type="hidden" name="returnUrl" id="returnUrl">
+                        <button type="submit" class="btn btn-lg btn-block" style="background-color:#7a6691;color: white;"><i class="ft-unlock"></i> Giriş</button>
+                    </form>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="">
+                    <p class="float-sm-left text-xs-center m-0"></p>
+                    <!--<p class="float-sm-left text-xs-center m-0"><a href="recover-password.html" class="card-link">Recover password</a></p>-->
+                    <!--<p class="float-sm-right text-xs-center m-0">New to Stack? <a href="register-simple.html" class="card-link">Sign Up</a></p>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    window.onload = function() {
+
+        //Login Register Validation
+        if ($("form.form-horizontal").attr("novalidate") != undefined) {
+            $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
+        }
+
+        // Remember checkbox
+        if ($('.chk-remember').length) {
+            $('.chk-remember').iCheck({
+                checkboxClass: 'icheckbox_square-blue',
+                radioClass: 'iradio_square-blue',
+            });
+        }
+    }
+</script>

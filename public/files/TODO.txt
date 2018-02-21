@@ -1,0 +1,27 @@
+Sistem
+    Oluşan hataları kaydet
+    Sistem yönetici arayüzü
+    Hacettepe kimlik doğrulama servisleri ile entegre olma
+
+Kullanıcı
+    Nokta kaydet/güncelle
+    Geçmiş değişiklikleri görüntüle
+    Geçmiş değişikliklerden birine geri dön
+
+Sistem Yöneticisi
+    Tüm kayıtları harita üzerinde göster
+        Noktalar şeklinde ?
+    Tüm kayıtları tablo üzerinde listele
+        Tablodaki her kayıt için :
+            Kayıt id
+            İlk kayıt tarihi
+            Son güncelleme tarihi
+            Toplam değişiklik sayısı
+            Haritada göster linki
+            Sil linki
+    Tüm verileri exportlama ?
+        Veri türü : csv, geojson, shapefile vs..
+    
+    
+
+    

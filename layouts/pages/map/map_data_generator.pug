@@ -1,0 +1,108 @@
+extends ../../base
+
+//- Template customization
+//------------------------
+block templateConfig
+	- var templateCustom = "vertical-layout vertical-menu"
+	- var dataMenu = "vertical-menu"
+
+//- Page level customization
+//------------------------
+block pageConfig
+	- var logoType = 'light'
+
+block navbarConfig
+	- var navbarPosition = "navbar-fixed-top"
+	- var navbarColor = "navbar-semi-dark"
+	- var navbarShadow = true
+
+block verticalMenuConfig
+	- var menuType = "menu-fixed"
+	- var menuColor = "menu-dark"
+	- var menuOpenType = "menu-accordion"
+	- var menuShadow = true
+
+block footerConfig
+	- var footerType = "footer-static"
+	- var footerColor = "footer-light"
+	- var footerBorder = true
+
+//- Template includes
+//-------------------
+
+block header
+	include ../../templates/sections/header/header.pug
+
+block main-menu
+	include ../../templates/sections/menu/vertical-menu.pug
+
+block page-header
+	//- if blankPage != true
+	//- 	include ../../pages/page-headers/breadcrumbs-basic.pug
+
+
+block content
+	//- .col-md-9
+	.col-md-12
+		#floating-panel
+			div
+				input#apiKey(type='text', value='tjaaCCbpokuFVnpx64FlTwS4IXRtix06aMpu4inceTA', style='display: none')
+				input#procedurePrefix(type='text', value='TEST_USER')
+				select.btn#observedProperty
+					each item in  hastalikler
+						option(value=item.name)=item.name
+				input#procedureCount(type='number', value='100')
+				input#dayCount(type='number', value='5')
+				input#startDate(type='date', value='2017-09-14')
+				button#startMap Draw Areas
+				button#resetMap Clear Map
+				button#insertProcedure(disabled='') Insert Procedures - Observations
+		#map
+		//- #bottom-panel
+		//- 	div
+		//- 		label Min Referans
+		//- 		input#minreferans(type='number', value='0')
+		//- 		label Max Referans
+		//- 		input#maxreferans(type='number', value='100')
+		//- 	div
+		//- 		label radius size
+		//- 		input#radius(type='range', min='1', max='50', step='1', value='10')
+		//- 		label blur size
+		//- 		input#blur(type='range', min='1', max='50', step='1', value='15')
+
+
+block footer
+	include ../../templates/sections/footer/footer.pug
+
+//- Template specific dependency
+//------------------------------
+
+//- Vendor CSS
+//------------------------------
+//- Add Vendor specific CSS
+block vendorcss
+	link(rel='stylesheet', type='text/css', href='../../../app-assets/vendors/css/extensions/sweetalert.css')
+//- Page CSS
+//------------------------------
+
+//- Add custom page specific CSS
+block pagecss	
+	link(rel='stylesheet', type='text/css', href='../../../app-assets/css/core/menu/menu-types/vertical-menu.css')
+	link(rel='stylesheet', type='text/css', href='../../../app-assets/css/core/menu/menu-types/vertical-overlay-menu.css')
+	link(rel='stylesheet', type='text/css', href='../../../assets/css/map.css')
+
+//- Vendor JS
+//------------------------------
+//- Add vendor specific JS
+block vendorjs
+	script(src='https://openlayers.org/en/v4.3.3/build/ol.js', type='text/javascript')
+	script(src='https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL', type='text/javascript')
+	script(src='../../../app-assets/vendors/js/extensions/sweetalert.min.js', type='text/javascript')
+	script(src='../../../app-assets/vendors/js/extensions/moment.min.js', type='text/javascript')
+
+//- Page JS
+//------------------------------
+//- Add custom page specific JS
+block pagejs
+	script(src='../../../assets/js/ASUASENSORDATASDK.js', type='text/javascript')
+	script(src='../../../assets/js/veriuret.js', type='text/javascript')

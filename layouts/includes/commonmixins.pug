@@ -1,0 +1,28 @@
+mixin printUserCardModal(type)
+    #enter-card.modal.fade.text-xs-left(tabindex='-1', role='dialog', aria-labelledby='myModalLabel1', aria-hidden='true', style='display: none;')
+        .modal-dialog(role='document')
+            .modal-content
+                - var titleEnterModal = "Kullanıcı Giriş Kartı"
+                - if(type && type == "employee")
+                    - titleEnterModal = "Görevli Giriş Kartı"
+                - else if(type && type == "manager")
+                     - titleEnterModal = "Yönetici Giriş Kartı"
+                - else if(type && type == "client")
+                     - titleEnterModal = "Müşteri Giriş Kartı"
+                .modal-header
+                    button.close(type='button', data-dismiss='modal', aria-label='Close')
+                        span(aria-hidden='true') ×
+                    h4#myModalLabel1.modal-title=titleEnterModal        
+                .modal-body#printBody
+                    table.table.table-bordered.mb-0
+                        tbody
+                            tr
+                                td
+                                    h2#user-name(style="font-weight: bold;")
+                                    h1#user-code
+                                td
+                                    #qrdiv
+                .modal-footer
+                    button#print-info(type='button' class="btn btn-outline-primary" print-title=titleEnterModal )
+                        i.fa.fa-print
+                        | Yazdır

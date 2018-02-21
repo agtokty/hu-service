@@ -1,0 +1,106 @@
+#map {
+    height: 670px;
+}
+
+/* .ol-control button { 
+    background-color: rgba(40, 40, 40, 0.8) !important;
+}
+.ol-control button:hover { 
+    background-color: rgba(40, 40, 40, 1) !important;
+} */
+
+#map .ol-zoom .ol-zoom-out {
+    margin-top: 204px;
+  }
+  #map .ol-zoomslider {
+    background-color: transparent;
+    top: 2.3em;
+  }
+
+  #map .ol-touch .ol-zoom .ol-zoom-out {
+    margin-top: 212px;
+  }
+  #map .ol-touch .ol-zoomslider {
+    top: 2.75em;
+  }
+
+  #map .ol-zoom-in.ol-has-tooltip:hover [role=tooltip],
+  #map .ol-zoom-in.ol-has-tooltip:focus [role=tooltip] {
+    top: 3px;
+  }
+
+  #map .ol-zoom-out.ol-has-tooltip:hover [role=tooltip],
+  #map .ol-zoom-out.ol-has-tooltip:focus [role=tooltip] {
+    top: 232px;
+  }
+
+
+#map-search-panel {
+    position: absolute;
+    top: 5px;
+    z-index: 500;
+    padding: 5px;
+    text-align: center;
+    font-family: 'Arial', 'sans-serif';
+    line-height: 30px;
+    padding-left: 10px;
+    width: 300px;
+}
+
+.selected-layer{
+    background-color: #d0d8e094
+}
+
+#floating-panel-right {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    z-index: 5;
+    background-color: #fff;
+    padding: 5px;
+    border: 1px solid #999;
+    padding-left: 10px;
+    width: 25%;
+    border-radius: 0.25rem;
+}
+
+#floating-panel-right  button{
+    float: right;
+    padding: 0.50rem 1rem;
+    margin-top: 10px;
+}
+
+@media only screen and (max-width: 500px) {
+     #map-search-panel{
+        top: 0px;
+     }
+
+     #floating-panel-right{
+        bottom: 24px;
+        /* float: right; */
+        /* padding: 0.50rem 1rem; */
+        margin-top: unset;
+        top: unset;
+        right: unset;
+        width: 90%;
+        position: fixed;
+        margin-left: 5%;
+     }
+
+     .pad-r-l-0{
+        padding-right: 0px;
+        padding-left: 0px;
+     }
+
+     #map-search-panel{
+         width: 100%
+     }
+
+     html body .content .content-wrapper {
+          padding: 0rem;
+    }
+
+    span{
+        font-size: small;
+    }
+}

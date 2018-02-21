@@ -1,0 +1,114 @@
+extends ../../base
+
+//- Template customization
+//------------------------
+block templateConfig
+	- var templateCustom = "vertical-layout vertical-menu"
+	- var dataMenu = "vertical-menu"
+
+//- Page level customization
+//------------------------
+block pageConfig
+	- var logoType = 'light'
+
+block navbarConfig
+	- var navbarPosition = "navbar-fixed-top"
+	- var navbarColor = "navbar-semi-dark"
+	- var navbarShadow = true
+
+block verticalMenuConfig
+	- var menuType = "menu-fixed"
+	- var menuColor = "menu-dark"
+	- var menuOpenType = "menu-accordion"
+	- var menuShadow = true
+
+block footerConfig
+	- var footerType = "footer-static"
+	- var footerColor = "footer-light"
+	- var footerBorder = true
+
+//- Template includes
+//-------------------
+
+block header
+	include ../../templates/sections/header/header.pug
+
+block main-menu
+	include ../../templates/sections/menu/vertical-menu.pug
+
+block page-header
+	//- if blankPage != true
+	//- 	include ../../pages/page-headers/breadcrumbs-basic.pug
+
+
+block content
+	script#delete1.
+		var savedData_saved = #{saved};
+	- if (saved == true)
+		script#delete.
+			var savedData_lat = #{savedData.lat};
+			var savedData_lon = #{savedData.lon};
+			var savedData_note = "#{savedData.note}";
+			
+	.col-md-12.pad-r-l-0
+		#map-search-panel
+			.input-group
+				.input-group-btn(title="Harita altlık katmanı değiştir")
+					button.btn.btn-primary.dropdown-toggle(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+						i.ft-layers
+					.dropdown-menu.map-layers(x-placement='bottom-start', style='position: absolute; transform: translate3d(0px, 40px, 0px); top: 0px; left: 0px; will-change: transform;')
+						a.dropdown-item.selected-layer(name="Google" id="google-layer") Google
+						a.dropdown-item(name="OSM" id="osm-layer") Open Street Map
+				input.form-control.gcd-gl-input#gcd-input-query(type=text placeholder="Haritada ara")
+
+		#floating-panel-right
+			//- - var buttonText = "Kaydet"
+			//- - if (saved == false)
+			//- 	span#message-span
+			//- 		| Hoşgeldiniz! Servise bindiğiniz noktayı haritadan tıklayarak belirledikten sonra kaydet butonuna basınız.
+			//- - else
+			//- 	- buttonText = "Güncelle"
+			//- 	span#message-span 
+			//- 		| Servise bindiğiniz noktayı değiştirmek için harita üzerinde yeni bir yere tıkladıktan sonra güncelle butonuna basınız.
+			//- br
+			//- button.btn.btn-info.btn-block#save-location(disabled)=buttonText
+		#map.map
+	//- .col-md-2
+	//- 	div
+
+block footer
+	include ../../templates/sections/footer/footer.pug
+
+//- Template specific dependency
+//------------------------------
+
+//- Vendor CSS
+//------------------------------
+//- Add Vendor specific CSS
+block vendorcss
+	link(rel='stylesheet', type='text/css', href='../../../app-assets/vendors/css/extensions/sweetalert.css')
+//- Page CSS
+//------------------------------
+
+//- Add custom page specific CSS
+block pagecss	
+	link(rel='stylesheet', type='text/css', href='../../../app-assets/css/core/menu/menu-types/vertical-menu.css')
+	link(rel='stylesheet', type='text/css', href='../../../app-assets/css/core/menu/menu-types/vertical-overlay-menu.css')
+	link(rel='stylesheet', type='text/css', href='../../../assets/css/map.css')
+	link(rel='stylesheet', type='text/css', href="https://openlayers.org/en/v4.6.4/css/ol.css")
+
+//- Vendor JS
+//------------------------------
+//- Add vendor specific JS
+block vendorjs
+	script(src='https://openlayers.org/en/v4.3.3/build/ol.js', type='text/javascript')
+	script(src='https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL', type='text/javascript')
+	script(src='../../../app-assets/vendors/js/extensions/sweetalert.min.js', type='text/javascript')
+
+//- Page JS
+//------------------------------
+//- Add custom page specific JS
+block pagejs
+	script(src='../../../app-assets/vendors/js/ol-geocoder-debug.js', type='text/javascript')
+	script(src='../../../assets/js/app.ol.routes.js', type='text/javascript')
+	

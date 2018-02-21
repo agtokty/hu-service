@@ -1,0 +1,22 @@
+//-
+	Modifiers :
+	.footer-fixed : For fixed footer
+	.footer-dark, .footer-dark, footer-transparent : For footer light, dark & transparent option
+
+block footerConfig
+	- var footerType = "footer-static"
+	- var footerColor = "footer-light"
+	- var footerBorder = true
+
+//- footer(class="footer" + " " + footerType + " " +  footerColor, 
+//- class=(footerBorder == true ? 'navbar-border' : ''), 
+//- class=(footerShadow == true ? 'navbar-shadow' : ''))
+footer.footer.navbar-fixed-bottom.footer-dark.navbar-border(style="padding: 0.1rem;")
+	p.clearfix.blue-grey.lighten-2.text-sm-center.mb-0.px-2
+		span.float-md-left.d-xs-block.d-md-inline-block
+			| Copyright  &copy; #{new Date().getFullYear()} 
+			a(href='https://www.hacettepe.edu.tr/', target='_blank', class="text-bold-800 grey darken-2") Hacettepe
+			//- |, All rights reserved. 
+		span.float-md-right.d-xs-block.d-md-inline-block
+			//- | Made with 
+			//- i.ft-heart.pink

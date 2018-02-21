@@ -1,0 +1,70 @@
+
+- var menuFlipped        = false			//-Default menu left aligned
+- var boxedLayout        = false			//-Default boxedLayout is false
+- var isContentMenu      = false			//- Default isContentMenu is false
+- var navbarFixed        = true			//- OPTIONS:- true, false
+- var contentLayout      = "2-columns"	//- Default contentLayout is 2-columns
+- var logoType           = 'dark'		//- Default dark.
+- var menuOpen           = "click"			//- OPTIONS: click, hover
+- var navbarHideOnScroll = false
+- var footerHideOnScroll = false
+- var blankPage          = false
+- var bodyCustom         = ''
+- var headerType		 = 'header'
+
+include includes/mixins.pug
+
+
+//-Template name class to support tamplates specific scss
+block templateConfig
+block pageConfig
+block verticalMenuConfig
+block horizontalMenuConfig
+
+
+doctype html
+html(lang="en" class="loading" data-textdirection=useDirection)
+	head
+		block meta
+			include includes/head.pug
+		block styles
+			include includes/styles.pug
+
+	body(class=templateCustom +" " +  contentLayout +" " + bodyCustom, 
+	class=(menuFlipped == true ? 'menu-flipped' : ''), 
+	class=(boxedLayout == true ? 'container boxed-layout' : ''), 
+	class=(blankPage == true ? 'blank-page' : ''), 
+	class=(navbarFixed == true ? 'fixed-navbar' : ''), 
+	class=(blankPage == true ? 'blank-page' : '') , 
+	data-open=menuOpen, data-menu=dataMenu, data-col=contentLayout)
+
+
+		//- Show header, footer & menu if blank page equals to false
+		if blankPage != true
+
+			//- START HEADER
+			= '\n'
+			block header
+			= '\n'
+			//-  END HEADER
+
+		// ////////////////////////////////////////////////////////////////////////////
+		//- START CONTAINER
+
+		//-Call page layouts mixins
+		+pageLayouts(contentLayout, sidebarSticky, isContentMenu)
+
+		//- END CONTAINER
+
+		// ////////////////////////////////////////////////////////////////////////////
+		= '\n'
+
+		if blankPage != true
+			//- START FOOTER
+			= '\n'
+			block footer
+			= '\n'
+			//- END FOOTER
+
+		block scripts
+			include includes/scripts.pug

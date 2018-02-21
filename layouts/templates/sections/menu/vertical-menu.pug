@@ -1,0 +1,18 @@
+block verticalMenuConfig
+	- var menuType = "menu-fixed"
+	- var menuColor = "menu-dark"
+	- var menuOpenType = "menu-accordion"
+	- var menuShadow = true
+
+.main-menu(class=menuType + ' ' + menuColor + ' ' +  menuOpenType, 
+class=(menuNativeScroll == true ? 'menu-native-scroll' : ''), 
+class=(menuIconRight == true ? 'menu-icon-right' : ''), 
+class=(menuBorder == true ? 'menu-bordered' : ''), 
+class=(menuShadow == true ? 'menu-shadow' : ''), 
+class=(menuBorder == true ? 'menu-border' : '') 
+data-scroll-to-active="true")
+	.main-menu-content
+		+verticalMenu([
+			{id:"routes", url:"/routes",name:"Rotalar",slug:"/routes",icon:"ft-clock", tagcustom: "tag tag-primary tag-pill float-xs-right mr-2"},
+			{id:"stations", url:"#",name:"Duraklar",slug:"/stations",icon:"ft-clock", tagcustom: "tag tag-primary tag-pill float-xs-right mr-2"}
+    ])

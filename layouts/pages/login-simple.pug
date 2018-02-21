@@ -1,0 +1,58 @@
+//- =========================================================================================
+	File Name: login-simple.jade
+	Description: User simple login page.
+	----------------------------------------------------------------------------------------
+	Item Name: Stack - Responsive Admin Template
+	Version: 1.0
+	Author: PIXINVENT
+	Author URL: http://www.themeforest.net/user/pixinvent
+	==========================================================================================-//
+//-extends template
+extends ../base
+
+block pageVars
+	- var pageTitle    = "Login Page"
+	- var pageSubTitle = "Simple User Login Page"
+	- var description  = "User simple login page."
+	- var activeMenu   = "login-simple"
+
+append pageConfig
+	- var contentLayout = '1-column'
+	- var blankPage = true //- OPTIONS: true, false
+	- var navbarFixed = false //- OPTIONS:- true, false
+
+//- Include page content in page block
+append content
+	label#hiddenUrlLabel(style='display:none')=returnUrl
+	div#hiddenError(style='display:none')=error
+	include ../contents/login-simple.html
+
+//- Vendor CSS
+//------------------------------
+//- Add Vendor specific CSS
+append vendorcss
+	//- iCheck css
+	//- link(rel='stylesheet', type='text/css', href='../../../app-assets/vendors/css/forms/icheck/icheck.css')
+	link(rel='stylesheet', type='text/css', href='../../../app-assets/vendors/css/forms/icheck/custom.css')
+	link(rel='stylesheet', type='text/css', href='../../../app-assets/vendors/css/extensions/sweetalert.css')
+
+//- Page CSS
+//------------------------------
+
+//- Add custom page specific CSS
+append pagecss
+
+//- Vendor JS
+//------------------------------
+//- Add vendor specific JS
+append vendorjs
+	//- iCheck
+	//- script(src='../../../app-assets/vendors/js/forms/icheck/icheck.min.js', type='text/javascript')
+	//- script(src='../../../app-assets/vendors/js/forms/validation/jqBootstrapValidation.js', type='text/javascript')
+	script(src='../../../app-assets/vendors/js/extensions/sweetalert.min.js', type='text/javascript')
+
+//- Page JS
+//------------------------------
+//- Add custom page specific JS
+append pagejs
+	
