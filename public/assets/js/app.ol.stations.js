@@ -22,15 +22,23 @@ $(function () {
     });
 
     var styles = {
-        'icon': new ol.style.Style({
-            image: new ol.style.Icon({
-                anchor: [0.5, 1],
-                // size: [45, 45],
-                scale: 0.1,
-                src: '/images/pin-map-location-06-512.png'
+        route: new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                width: 6, color: [40, 40, 40, 0.8]
             })
         })
     };
+
+    var styleFunction = function (feature) {
+        return styles[feature.getGeometry().getType()];
+    };
+    var vectorSource4Routes = new ol.source.Vector({
+        projection: 'EPSG:4326'
+    });
+    var routeVectorLayer = new ol.layer.Vector({
+        source: vectorSource4Routes,
+        // style: styleFunction
+    });
 
     var googleLayer = new ol.layer.Tile({
         source: new ol.source.OSM({
@@ -47,7 +55,8 @@ $(function () {
         layers: [
             osmLayer,
             googleLayer,
-            vectorLayer
+            vectorLayer,
+            routeVectorLayer
         ],
         view: new ol.View({
             center: ol.proj.fromLonLat(defaultLonLatCenter),
@@ -62,7 +71,7 @@ $(function () {
     map.on("click", function (event) {
         var coords = ol.proj.transform(event.coordinate, 'EPSG:3857', 'EPSG:4326');
         var v = event.map.getView();
-        // console.log("zoom " + v.getZoom());
+        console.log("zoom " + v.getZoom());
         // console.log(coords);
     });
 
@@ -116,24 +125,42 @@ $(function () {
         vectorSource4Stations.addFeatures(featuresDuraklar);
     }
 
-
     //Find and draw route
-
     var SELECT_FOR = {
         START: "start",
         STOP: "stop",
         NON: "non"
     }
 
-    var ROUTE_TYPE = {
-        CAR: "car",
-        WALK: "walk"
-    }
-
     var SELECTED_STATIONS = {
         START: {},
         STOP: {},
-        TYPE: ROUTE_TYPE.CAR
+        profile: "car",
+        alternatives: false,
+        steps: true,
+        USE: function () {
+            if (!this.START || !this.START)
+                return console.log("START or/and STOP not defined");
+
+            FindRoute({
+                profile: $("#route-type").val() || this.profile,
+                alternatives: this.alternatives,
+                steps: this.steps,
+                start: this.START,
+                stop: this.STOP
+            }, function (result) {
+
+                if (!result)
+                    return alert("Hata!");
+
+                if (result.routes && result.routes.length > 0) {
+                    var route1 = result.routes[0];
+                    utils.createRoute(route1, vectorSource4Stations);
+                }
+
+                console.log(result);
+            })
+        }
     }
 
     var selectFor = SELECT_FOR.START;
@@ -146,24 +173,16 @@ $(function () {
         // console.log("zoom " + v.getZoom());
         console.log(coords);
 
-        map.forEachFeatureAtPixel(map.getEventPixel(event), function (feature, layer) {
-            console.log(layer);
-            console.log(feature);
-        });
+        if (selectFor == SELECT_FOR.START) {
+            SELECTED_STATIONS.START = coords;
+            $("#startInput").val(coords.join())
+        } else if (selectFor == SELECT_FOR.STOP) {
+            SELECTED_STATIONS.STOP = coords;
+            $("#stopInput").val(coords.join())
+            SELECTED_STATIONS.USE();
+        } else {
 
-        map.forEachFeatureAtPixel(event.pixel, function (feature, layer) {
-            //you may also use the layer argument here, so avoid processing for layers you dont want such functionality
-            if (typeof feature.get('features') === 'undefined') {
-                // means there is no cluster feature on click
-            } else {
-                var clustFeats = feature.get('features');
-                //now loop through the features to get the attributes
-                //I have just added the "attr1" for demo purposes
-                for (var i = 0; i < clustFeats.length; i++) {
-                    attsCollector.push(clustFeats[i].get("attr1"));
-                }
-            }
-        });
+        }
 
         ol.Observable.unByKey(mapClickListenerKey);
     }
@@ -171,7 +190,13 @@ $(function () {
     $(".start-stop").on("click", function (e) {
         selectFor = $(e.target).attr("selectFor") || "start";
         mapClickListenerKey = map.on("click", mapClickListener);
+
+        $(e.target).val("");
     })
+
+    $("#clear-routes").on("click", function () {
+        vectorSource4Stations.clear();
+    });
 
     var FindRoute = function (options, callback) {
 
@@ -182,10 +207,11 @@ $(function () {
         options.overview = options.overview || 'false';
         options.annotations = (options.annotations != true && options.annotations != false) ? false : options.annotations;
 
-        var coordinates = s_dy + "," + s_dx + ";" + d_py + "," + d_x;
+        var coordinates = options.start[0] + "," + options.start[1] + ";" + options.stop[0] + "," + options.stop[1];
 
-        var path = "/route/v1/" + options.profile + "/" + coordinates + "?alternatives=" + options.alternatives +
-            "&steps=" + options.steps + "&geometries=" + options.geometries + "&overview=" + options.overview;
+        // var path = "/route/v1/" + options.profile + "/" + coordinates + "?alternatives=" + options.alternatives +
+        //     "&steps=" + options.steps + "&geometries=" + options.geometries + "&overview=" + options.overview;
+        var path = "/route/v1/" + options.profile + "/" + coordinates //+ "?geometries=" + options.geometries;
 
         path = "http://router.project-osrm.org" + path;
 
@@ -205,12 +231,101 @@ $(function () {
 
     }
 
-    var AddRouteToLayer = function (data) {
+    var AddRouteToLayer = function (route) {
+
+        if (route && route.legs && route.legs.length > 0) {
+            var leg1 = route.legs[0];
+            if (leg1) {
+                console.log(leg1);
+                // distance 17485.6
+                // duration 566.9
+                // steps  : (14) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+                // summary Ankara-Ayaş yolu, İstanbul Yolu"
+
+                var featuresRouteParts = [];
+                var i, geom, feature;
+
+                for (var i = 0; i < leg1.steps.length; i++) {
+                    const element = leg1.steps[i];
+
+                    // element.geometry.crs = {
+                    //     'type': 'name',
+                    //     'properties': {
+                    //         'name': 'EPSG:3857'
+                    //     }
+                    // };
+
+                    var coordinates = element.geometry.coordinates;
+
+                    var feature = new ol.Feature({
+                        geometry: new ol.geom.LineString(coordinates),
+                        name: 'Line'
+                    })
+
+                    // geom = new ol.geom.Circle(
+                    //     ol.proj.transform([duraklar[i].py, duraklar[i].px], 'EPSG:4326', 'EPSG:3857'),
+                    //     25
+                    // );
+                    // feature = new ol.Feature(geom);
+
+                    featuresRouteParts.push(feature);
+
+                }
+
+                vectorSource4Routes.addFeatures(featuresRouteParts);
+
+            }
+        }
 
     }
 
     var AddRouteInfoToWindow = function (data) {
 
     }
+
+
+    var utils = {
+        getNearest: function (coord) {
+            var coord4326 = utils.to4326(coord);
+            return new Promise(function (resolve, reject) {
+                //make sure the coord is on street
+                fetch(url_osrm_nearest + coord4326.join()).then(function (response) {
+                    // Convert to JSON
+                    return response.json();
+                }).then(function (json) {
+                    if (json.code === 'Ok') resolve(json.waypoints[0].location);
+                    else reject();
+                });
+            });
+        },
+        // createFeature: function (coord) {
+        //     var feature = new ol.Feature({
+        //         type: 'place',
+        //         geometry: new ol.geom.Point(ol.proj.fromLonLat(coord))
+        //     });
+        //     feature.setStyle(styles.icon);
+        //     vectorSource.addFeature(feature);
+        // },
+        createRoute: function (route, vectorSource) {
+            // route is ol.geom.LineString
+            var route = new ol.format.Polyline({
+                factor: 1e5
+            }).readGeometry(route.geometry, {
+                dataProjection: 'EPSG:4326',
+                featureProjection: 'EPSG:3857'
+            });
+            var feature = new ol.Feature({
+                type: 'route',
+                geometry: route
+            });
+            feature.setStyle(styles.route);
+            vectorSource.addFeature(feature);
+        },
+        to4326: function (coord) {
+            return ol.proj.transform([
+                parseFloat(coord[0]), parseFloat(coord[1])
+            ], 'EPSG:3857', 'EPSG:4326');
+        }
+    };
 
 })
