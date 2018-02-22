@@ -73,6 +73,7 @@ app.use(function (req, res, next) {
 var secure = require('./routes/secure');
 var index = require('./routes/index');
 var rotalar = require('./routes/rotalar');
+var stations = require('./routes/stations');
 var api = require('./routes/api');
 
 var pugOptions = {
@@ -112,6 +113,7 @@ app.use(function (req, res, next) {
 app.use('/secure', secure);
 app.use('/', index);
 app.use('/routes', rotalar);
+app.use('/stations', stations);
 app.use('/api', api);
 
 app.listen(process.env.PORT || PORT, function () {

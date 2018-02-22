@@ -5,10 +5,10 @@ var db = require('./db/queries');
 
 router.get('/', function (req, res) {
     var pugOptions = req.pugOptions;
-    pugOptions.pageTitle = "Routes";
+    pugOptions.pageTitle = "Stations";
     pugOptions.saved = false;
 
-    res.render('pages/map/map_routes', pugOptions);
+    res.render('pages/map/map_stations', pugOptions);
 });
 
 module.exports = router;
