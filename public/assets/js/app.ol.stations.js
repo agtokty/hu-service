@@ -253,7 +253,7 @@ $(function () {
         //     "&steps=" + options.steps + "&geometries=" + options.geometries + "&overview=" + options.overview;
         var path = "/route/v1/" + options.profile + "/" + coordinates //+ "?geometries=" + options.geometries;
 
-        path = "http://router.project-osrm.org" + path;
+        path = "https://router.project-osrm.org" + path;
 
         try {
             $.ajax({
