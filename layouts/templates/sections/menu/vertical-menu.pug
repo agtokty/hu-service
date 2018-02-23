@@ -13,6 +13,11 @@ class=(menuBorder == true ? 'menu-border' : '')
 data-scroll-to-active="true")
 	.main-menu-content
 		+verticalMenu([
-			{id:"routes", url:"/routes",name:"Rotalar",slug:"/routes",icon:"ft-clock", tagcustom: "tag tag-primary tag-pill float-xs-right mr-2"},
-			{id:"stations", url:"/stations",name:"Duraklar",slug:"/stations",icon:"ft-clock", tagcustom: "tag tag-primary tag-pill float-xs-right mr-2"}
+			{id:"routes", url:"/routes",name:"Duraklar",slug:"/routes",icon:"ft-clock", tagcustom: "tag tag-primary tag-pill float-xs-right mr-2"},
+			{url:"#",name:"Araçlar",slug:"tools",icon:"ft-grid", tagcustom: "tag tag-primary tag-pill float-xs-right mr-2",
+				submenu:[
+					{url:"/tools/osrm",name:"OSRM ile Rota Bul",slug:"/tools/osrm",icon:"fa-location-arrow", tagcustom: "tag tag-primary tag-pill float-xs-right mr-2"},
+					{url:"/tools/generate-weight",name:"Durak Ağırlıkları",slug:"/tools/generate-weight",icon:"ft-clock", tagcustom: "tag tag-primary tag-pill float-xs-right mr-2"},
+				]
+			},
     ])

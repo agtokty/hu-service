@@ -5,10 +5,10 @@ var db = require('./db/queries');
 
 router.get('/', function (req, res) {
     var pugOptions = req.pugOptions;
-    pugOptions.pageTitle = "Stations";
+    pugOptions.pageTitle = "Durak ağırlık üretme sayfası";
     pugOptions.saved = false;
 
-    res.render('pages/map/map_stations', pugOptions);
+    res.render('pages/map/tools_weight_generate', pugOptions);
 });
 
 module.exports = router;
