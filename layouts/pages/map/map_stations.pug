@@ -54,22 +54,26 @@ block content
 				input.form-control.gcd-gl-input#gcd-input-query(type="text" placeholder="Haritada ara")
 
 		#floating-panel-right
-			button.btn.btn-info#clear-routes(type="clear") Clear
-			.input-group
+			.input-group.input-group-sm.p-t-5
 				select.form-control#route-type
+					option(value="route") route
 					option(value="driving") driving
 					option(value="car") car
 					option(value="walk") walk
-			.input-group
-				.input-group-btn(title="Başlangıç noktası seç")
-					button.btn.btn-primary(type='button')
-						i.ft-layers
+					option(value="bike") bike
+					option(value="foot") foot
+			.input-group.input-group-sm.p-t-5
+				span.input-group-btn(title="Başlangıç noktası seç")
+					button.btn.btn-primary.start-stop-btn(type='button' selectFor="start") Start
 				input.form-control#startInput.start-stop(type="text" placeholder="Start" selectFor="start")
-			.input-group
+			.input-group.input-group-sm.p-t-5
 				.input-group-btn(title="Bitiş noktası seç")
-					button.btn.btn-danger(type='button')
-						i.ft-layers
+					button.btn.btn-danger.start-stop-btn(type='button' selectFor="stop") Stop
 				input.form-control#stopInput.start-stop(type="text" placeholder="Stop"  selectFor="stop")
+			hr
+			#route-result
+			button.btn.btn-info#clear-routes(type="clear") Clear
+
 		#map.map
 	//- .col-md-2
 	//- 	div

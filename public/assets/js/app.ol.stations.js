@@ -26,6 +26,31 @@ $(function () {
             stroke: new ol.style.Stroke({
                 width: 6, color: [40, 40, 40, 0.8]
             })
+        }),
+        driving: new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                width: 6, color: [200, 40, 40, 0.8]
+            })
+        }),
+        car: new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                width: 6, color: [200, 200, 40, 0.8]
+            })
+        }),
+        walk: new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                width: 6, color: [40, 200, 100, 0.8]
+            })
+        }),
+        bike: new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                width: 6, color: [40, 200, 200, 0.8]
+            })
+        }),
+        foot: new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                width: 6, color: [200, 200, 100, 0.8]
+            })
         })
     };
 
@@ -142,8 +167,9 @@ $(function () {
             if (!this.START || !this.START)
                 return console.log("START or/and STOP not defined");
 
+            this.profile = $("#route-type").val() || this.profile;
             FindRoute({
-                profile: $("#route-type").val() || this.profile,
+                profile: this.profile,
                 alternatives: this.alternatives,
                 steps: this.steps,
                 start: this.START,
@@ -155,11 +181,12 @@ $(function () {
 
                 if (result.routes && result.routes.length > 0) {
                     var route1 = result.routes[0];
-                    utils.createRoute(route1, vectorSource4Stations);
+                    utils.createRoute(route1, vectorSource4Routes, this.profile);
+                    utils.createRouteInfo(route1, "#route-result");
                 }
 
                 console.log(result);
-            })
+            }.bind(this))
         }
     }
 
@@ -169,17 +196,21 @@ $(function () {
 
     var mapClickListener = function (event) {
         var coords = ol.proj.transform(event.coordinate, 'EPSG:3857', 'EPSG:4326');
-        // var v = event.map.getView();
-        // console.log("zoom " + v.getZoom());
         console.log(coords);
 
+        var tempCoords = [Number(coords[0]).toFixed(6), Number(coords[1]).toFixed(6)].join();
+
         if (selectFor == SELECT_FOR.START) {
+
             SELECTED_STATIONS.START = coords;
-            $("#startInput").val(coords.join())
+            $("#startInput").val(tempCoords);
+
         } else if (selectFor == SELECT_FOR.STOP) {
+
             SELECTED_STATIONS.STOP = coords;
-            $("#stopInput").val(coords.join())
+            $("#stopInput").val(tempCoords);
             SELECTED_STATIONS.USE();
+
         } else {
 
         }
@@ -194,8 +225,17 @@ $(function () {
         $(e.target).val("");
     })
 
+    $(".start-stop-btn").on("click", function (e) {
+        selectFor = $(e.target).attr("selectFor") || "start";
+        mapClickListenerKey = map.on("click", mapClickListener);
+
+        $("#" + selectFor +"Input").val("");
+    })
+
     $("#clear-routes").on("click", function () {
-        vectorSource4Stations.clear();
+        vectorSource4Routes.clear();
+
+        $("#route-result").empty();
     });
 
     var FindRoute = function (options, callback) {
@@ -225,10 +265,6 @@ $(function () {
         } catch (err) {
             console.log(err);
         }
-    }
-
-    var clearRoutesFromLayer = function () {
-
     }
 
     var AddRouteToLayer = function (route) {
@@ -279,11 +315,6 @@ $(function () {
 
     }
 
-    var AddRouteInfoToWindow = function (data) {
-
-    }
-
-
     var utils = {
         getNearest: function (coord) {
             var coord4326 = utils.to4326(coord);
@@ -306,7 +337,7 @@ $(function () {
         //     feature.setStyle(styles.icon);
         //     vectorSource.addFeature(feature);
         // },
-        createRoute: function (route, vectorSource) {
+        createRoute: function (route, vectorSource, type) {
             // route is ol.geom.LineString
             var route = new ol.format.Polyline({
                 factor: 1e5
@@ -315,11 +346,19 @@ $(function () {
                 featureProjection: 'EPSG:3857'
             });
             var feature = new ol.Feature({
-                type: 'route',
+                type: type || 'route',
                 geometry: route
             });
-            feature.setStyle(styles.route);
+            feature.setStyle(styles[type] || styles.route);
             vectorSource.addFeature(feature);
+        },
+        createRouteInfo: function (route, selector) {
+            var distance = $("<p>").text("Distance : " + route.distance);
+            var duration = $("<p>").text("Duration : " + route.duration);
+            var weight = $("<p>").text("Weight : " + route.weight);
+
+            $(selector).empty();
+            $(selector).append(distance).append(duration).append(weight);
         },
         to4326: function (coord) {
             return ol.proj.transform([

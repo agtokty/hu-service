@@ -64,7 +64,7 @@
     border-radius: 0.25rem;
 }
 
-#floating-panel-right  button{
+#floating-panel-right  .button1{
     float: right;
     padding: 0.50rem 1rem;
     margin-top: 10px;
