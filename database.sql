@@ -34,3 +34,12 @@ CREATE TABLE public.station (
   is_active boolean DEFAULT false,
   CONSTRAINT name_unq UNIQUE (adi)
 );
+
+
+--helper queries
+
+--check random daha generator result
+select sum(weight) , count(*) from station where is_active=true
+
+-- make stations inactive
+update station set weight=0, is_active=false
