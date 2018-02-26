@@ -131,6 +131,43 @@ $(function () {
     //     addStationCircle(data);
     // });
 
+    $("#start-process").on("click", function () {
+
+        var weight = $("#total-weight").val();
+        var count = $("#station-count").val();
+
+        if (!weight || !count || !Number(weight) || !Number(count)) {
+            console.log("hatalı veri!")
+            return;
+        }
+
+        var data = {
+            weight: weight,
+            count: count
+        };
+
+        $.ajax({
+            url: '/api/tools/generate_weight',
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (data, textStatus, jQxhr) {
+
+                console.log(data);
+
+                $("#start-process").remove();
+
+                swal("İşlem Tamamlandı", "Rasgele duraklar seçildi ve ağırlık noktaları atandı", "success");
+            },
+            error: function (jqXhr, textStatus, errorThrown) {
+                console.log(errorThrown);
+                swal("İşlem Tamamlanamadı", "Lütfen sayfayı yeniden yükleyip tekrar deneyiniz!", "error");
+            }
+        });
+
+    })
+
+
     var addStationCircle = function (duraklar) {
 
         var featuresDuraklar = [];

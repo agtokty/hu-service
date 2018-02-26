@@ -52,25 +52,17 @@ block content
 						a.dropdown-item.selected-layer(name="Google" id="google-layer") Google
 						a.dropdown-item(name="OSM" id="osm-layer") Open Street Map
 		#floating-panel-right
-			//- .input-group.input-group-sm.p-t-5
-			//- 	select.form-control#route-type
-			//- 		option(value="route") route
-			//- 		option(value="driving") driving
-			//- 		option(value="car") car
-			//- 		option(value="walk") walk
-			//- 		option(value="bike") bike
-			//- 		option(value="foot") foot
 			.input-group.input-group-sm.p-t-5
 				span.input-group-btn(title="Başlangıç noktası seç")
 					button.btn.btn-primary.start-stop-btn(type='button' selectFor="start") Toplam Ağırlık
-				input.form-control#total-weight.start-stop(type="text" value="1500" selectFor="start")
+				input.form-control#total-weight.start-stop(type="number" value="1500" selectFor="start")
 			.input-group.input-group-sm.p-t-5
 				.input-group-btn(title="Bitiş noktası seç")
 					button.btn.btn-danger.start-stop-btn(type='button' selectFor="stop") Durak Sayısı
-				input.form-control#station-count.start-stop(type="text" value="500"  selectFor="stop")
+				input.form-control#station-count.start-stop(type="number" value="500"  selectFor="stop")
 			hr
 			#route-result
-			button.btn.btn-info#start-process(type="clear") Start
+			button.btn.btn-info#start-process(type="clear") Başlat
 
 		#map.map
 	//- .col-md-2

@@ -31,5 +31,6 @@ CREATE TABLE public.station (
   px REAL,
   py REAL,
   weight smallint DEFAULT 0,
+  is_active boolean DEFAULT false,
   CONSTRAINT name_unq UNIQUE (adi)
 );

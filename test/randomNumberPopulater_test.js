@@ -20,10 +20,48 @@ it('createRandomNumbers should work fine', () => {
     var total = 0;
     for (let index = 0; index < randomArray.length; index++) {
         total += randomArray[index];
+
+        expect(randomArray[index]).is.gte(0)
     }
 
     expect(TOTAL_WEIGHT).to.eq(total);
     expect(TOTAL_RANDOM_POINT).to.eq(randomArray.length);
+})
+
+it('createRandomNumbers should work fine 2', () => {
+
+    var TOTAL_WEIGHT = "1500";
+    var TOTAL_RANDOM_POINT = "500";
+
+    var randomArray = randomNumberPopulater.createRandomNumbers(TOTAL_RANDOM_POINT, TOTAL_WEIGHT, 5, []);
+
+    var total = 0;
+    for (let index = 0; index < randomArray.length; index++) {
+        total += randomArray[index];
+
+        expect(randomArray[index]).is.gte(0)
+    }
+
+    expect(Number(TOTAL_WEIGHT)).to.eq(total);
+    expect(Number(TOTAL_RANDOM_POINT)).to.eq(randomArray.length);
+})
+
+it('createRandomNumbers should work fine 3', () => {
+
+    var TOTAL_WEIGHT = "1500";
+    var TOTAL_RANDOM_POINT = 200;
+
+    var randomArray = randomNumberPopulater.createRandomNumbers(TOTAL_RANDOM_POINT, TOTAL_WEIGHT, 2, null);
+
+    var total = 0;
+    for (let index = 0; index < randomArray.length; index++) {
+        total += randomArray[index];
+
+        expect(randomArray[index]).is.gte(0)
+    }
+
+    expect(Number(TOTAL_WEIGHT)).to.eq(total);
+    expect(Number(TOTAL_RANDOM_POINT)).to.eq(randomArray.length);
 })
 
 it('createNRondomNumber should work fine', () => {

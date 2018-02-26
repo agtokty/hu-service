@@ -20,6 +20,11 @@ var db = require('./../routes/db/queries');
 
 function createRandomNumbers(count, total, addSub, resultArray) {
 
+    if (!resultArray)
+        resultArray = [];
+    count = Number(count);
+    total = Number(total);
+
     if (count == 0)
         return resultArray;
 
@@ -41,6 +46,10 @@ function createRandomNumbers(count, total, addSub, resultArray) {
 
     if (random < 0)
         random = 0;
+
+    if (total <= random) {
+        random = total;
+    }
 
     total = total - random;
     count = count - 1;

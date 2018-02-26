@@ -89,6 +89,55 @@ function getAllStations(cb) {
         });
 }
 
+function getStationMinMaxId(cb) {
+    database.any('select min(id) as min, max(id) as max from station')
+        .then(function (data) {
+            cb(null, data);
+        })
+        .catch(function (err) {
+            cb(err)
+        });
+}
+
+function getAllActiveStations(cb) {
+    database.any('select * from station where is_active = true')
+        .then(function (data) {
+            cb(null, data);
+        })
+        .catch(function (err) {
+            cb(err)
+        });
+}
+
+function resetAllStations(cb) {
+    database.none('update station set weight=0, is_active=false ', {})
+        .then(function () {
+            cb(null, { result: "ok" })
+        })
+        .catch(function (err) {
+            cb(err);
+        });
+}
+
+function updateGeneratedWeights(updates, cb) {
+
+    // var updates = [{ id: 1, weight: 23 }, { id: 4, weight: 233 }, { id: 5, weight: 523 }];
+    database.tx(t => {
+        var queries = updates.map(u => {
+            return t.none('update station set weight=${weight}, is_active=true where id = $(id)', u);
+        });
+        return t.batch(queries);
+    })
+        .then(data => {
+            cb(null, "ok")
+        })
+        .catch(error => {
+            cb(error)
+        });
+
+}
+
+
 module.exports = {
     getAllLocations: getAllLocations,
     getSingleLocation: getSingleLocation,
@@ -96,5 +145,9 @@ module.exports = {
     updateLocation: updateLocation,
     removeLocation: removeLocation,
     insertStation: insertStation,
-    getAllStations: getAllStations
+    getAllStations: getAllStations,
+    getAllActiveStations: getAllActiveStations,
+    resetAllStations: resetAllStations,
+    getStationMinMaxId: getStationMinMaxId,
+    updateGeneratedWeights: updateGeneratedWeights
 };
