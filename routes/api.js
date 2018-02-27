@@ -38,6 +38,17 @@ router.get('/station/all', function (req, res) {
     })
 });
 
+router.get('/route/all', function (req, res) {
+
+    db.getAllRoutes(function (err, data) {
+        if (err) {
+            res.sendStatus(500);
+        } else {
+            res.send(data);
+        }
+    })
+});
+
 router.post('/location', function (req, res) {
     //TODO - validate data
 

@@ -42,34 +42,37 @@ block page-header
 
 
 block content
-	//- .col-md-9
-	.col-md-12
-		#floating-panel
-			div
-				input#apiKey(type='text', value='tjaaCCbpokuFVnpx64FlTwS4IXRtix06aMpu4inceTA', style='display: none')
-				input#procedurePrefix(type='text', value='TEST_USER')
-				select.btn#observedProperty
-					each item in  hastalikler
-						option(value=item.name)=item.name
-				input#procedureCount(type='number', value='100')
-				input#dayCount(type='number', value='5')
-				input#startDate(type='date', value='2017-09-14')
-				button#startMap Draw Areas
-				button#resetMap Clear Map
-				button#insertProcedure(disabled='') Insert Procedures - Observations
-		#map
-		//- #bottom-panel
-		//- 	div
-		//- 		label Min Referans
-		//- 		input#minreferans(type='number', value='0')
-		//- 		label Max Referans
-		//- 		input#maxreferans(type='number', value='100')
-		//- 	div
-		//- 		label radius size
-		//- 		input#radius(type='range', min='1', max='50', step='1', value='10')
-		//- 		label blur size
-		//- 		input#blur(type='range', min='1', max='50', step='1', value='15')
+	.col-md-12.pad-r-l-0
+		#map-search-panel
+			.input-group
+				.input-group-btn(title="Harita altlık katmanı değiştir")
+					button.btn.btn-primary.dropdown-toggle(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+						i.ft-layers
+					.dropdown-menu.map-layers(x-placement='bottom-start', style='position: absolute; transform: translate3d(0px, 40px, 0px); top: 0px; left: 0px; will-change: transform;')
+						a.dropdown-item.selected-layer(name="Google" id="google-layer") Google
+						a.dropdown-item(name="OSM" id="osm-layer") Open Street Map
+				input.form-control.gcd-gl-input#gcd-input-query(type="text" placeholder="Haritada ara")
 
+		#floating-panel-right
+			.input-group.input-group-sm.p-t-5
+				input.form-control#route_color(type="color")
+			//- .input-group.input-group-sm.p-t-5
+			//- 	span.input-group-btn(title="Başlangıç noktası seç")
+			//- 		button.btn.btn-primary.start-stop-btn(type='button' selectFor="start") Start
+			//- 	input.form-control#startInput.start-stop(type="text" placeholder="Start" selectFor="start")
+			//- .input-group.input-group-sm.p-t-5
+			//- 	.input-group-btn(title="Bitiş noktası seç")
+			//- 		button.btn.btn-danger.start-stop-btn(type='button' selectFor="stop") Stop
+			//- 	input.form-control#stopInput.start-stop(type="text" placeholder="Stop"  selectFor="stop")
+			hr
+			#route-result
+			button.btn.btn-warning#start_stop(type="start") Başla
+			button.btn.btn-info#back_route(type="back") Geri Al
+			button.btn.btn-primary#add_route(type="addclear") Ekle
+
+		#map.map
+	//- .col-md-2
+	//- 	div
 
 block footer
 	include ../../templates/sections/footer/footer.pug
@@ -90,6 +93,7 @@ block pagecss
 	link(rel='stylesheet', type='text/css', href='../../../app-assets/css/core/menu/menu-types/vertical-menu.min.css')
 	link(rel='stylesheet', type='text/css', href='../../../app-assets/css/core/menu/menu-types/vertical-overlay-menu.css')
 	link(rel='stylesheet', type='text/css', href='../../../assets/css/map.css')
+	link(rel='stylesheet', type='text/css', href="https://openlayers.org/en/v4.6.4/css/ol.css")
 
 //- Vendor JS
 //------------------------------
@@ -98,11 +102,11 @@ block vendorjs
 	script(src='https://openlayers.org/en/v4.3.3/build/ol.js', type='text/javascript')
 	script(src='https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL', type='text/javascript')
 	script(src='../../../app-assets/vendors/js/extensions/sweetalert.min.js', type='text/javascript')
-	script(src='../../../app-assets/vendors/js/extensions/moment.min.js', type='text/javascript')
 
 //- Page JS
 //------------------------------
 //- Add custom page specific JS
 block pagejs
-	script(src='../../../assets/js/ASUASENSORDATASDK.js', type='text/javascript')
-	script(src='../../../assets/js/veriuret.js', type='text/javascript')
+	script(src='../../../app-assets/vendors/js/ol-geocoder-debug.js', type='text/javascript')
+	script(src='../../../assets/js/app.ol.create_route.js', type='text/javascript')
+	

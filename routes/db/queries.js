@@ -89,6 +89,16 @@ function getAllStations(cb) {
         });
 }
 
+function getAllRoutes(cb) {
+    database.any('select * from route')
+        .then(function (data) {
+            cb(null, data);
+        })
+        .catch(function (err) {
+            cb(err)
+        });
+}
+
 function getStationMinMaxId(cb) {
     database.any('select min(id) as min, max(id) as max from station')
         .then(function (data) {
@@ -149,5 +159,6 @@ module.exports = {
     getAllActiveStations: getAllActiveStations,
     resetAllStations: resetAllStations,
     getStationMinMaxId: getStationMinMaxId,
-    updateGeneratedWeights: updateGeneratedWeights
+    updateGeneratedWeights: updateGeneratedWeights,
+    getAllRoutes: getAllRoutes
 };

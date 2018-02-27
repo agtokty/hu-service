@@ -73,8 +73,7 @@ app.use(function (req, res, next) {
 var secure = require('./routes/secure');
 var index = require('./routes/index');
 var rotalar = require('./routes/rotalar');
-var tools_osrm = require('./routes/tools_osrm');
-var tools_weight_generate = require('./routes/tools_weight_generate');
+var tools = require('./routes/tools');
 var api = require('./routes/api');
 
 var pugOptions = {
@@ -114,8 +113,7 @@ app.use(function (req, res, next) {
 app.use('/secure', secure);
 app.use('/', index);
 app.use('/routes', rotalar);
-app.use('/tools/osrm', tools_osrm);
-app.use('/tools/generate-weight', tools_weight_generate);
+app.use('/tools', tools);
 app.use('/api', api);
 
 app.listen(process.env.PORT || PORT, function () {
