@@ -6,7 +6,7 @@ var db = require('./db/queries');
 
 router.get('/', function (req, res) {
     var pugOptions = req.pugOptions;
-    pugOptions.pageTitle = "";
+    pugOptions.pageTitle = "Servis Biniş Durağı Belirleme Ekranı";
     pugOptions.saved = false;
 
     var code = util.getHash(req.session.user);
