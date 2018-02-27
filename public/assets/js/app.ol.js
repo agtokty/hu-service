@@ -4,20 +4,31 @@ $(function () {
     var mapHeight = $("body").height() - 70;
     $("#map").height(mapHeight);
 
-    // var raster = new ol.layer.Tile({
-    //     source: new ol.source.Stamen({
-    //         layer: 'toner'
-    //     })
-    // });
+    var styles = {
+        'icon': new ol.style.Style({
+            image: new ol.style.Icon({
+                anchor: [0.5, 1],
+                // size: [45, 45],
+                scale: 0.1,
+                src: '/images/pin-map-location-06-512.png'
+            })
+        })
+    };
+
+    var circleStyle = new ol.style.Style({
+        stroke: new ol.style.Stroke({
+            color: 'rgba(0, 0, 0, 0.4)',
+            width: 3
+        }),
+        fill: new ol.style.Fill({
+            color: 'rgba(0, 255, 0, 0.4)'
+        })
+    });
+
 
     var osmLayer = new ol.layer.Tile({
         source: new ol.source.OSM(),
     });
-
-    var circle = new ol.geom.Circle(
-        ol.proj.transform([32.9257, 39.9434], 'EPSG:4326', 'EPSG:3857'),
-        1000
-    );
 
     var selected = ol.proj.fromLonLat([32.7615216, 39.908144]);
     var defaultZoom = 10;
@@ -34,7 +45,6 @@ $(function () {
         geometry: new ol.geom.Point(selected)
     });
 
-    var pointFeatures = [new ol.Feature(circle)];
     var vectorSource = new ol.source.Vector({
         //projection: 'EPSG:4326'
         features: [startMarker]
@@ -53,22 +63,10 @@ $(function () {
 
     var vectorLayer4Stations = new ol.layer.Vector({
         source: vectorSource4Stations,
-        // style: function (feature) {
-        //     return styles[feature.get('type')];
-        // }
+        style: circleStyle
     });
 
 
-    var styles = {
-        'icon': new ol.style.Style({
-            image: new ol.style.Icon({
-                anchor: [0.5, 1],
-                // size: [45, 45],
-                scale: 0.1,
-                src: '/images/pin-map-location-06-512.png'
-            })
-        })
-    };
 
     var googleLayer = new ol.layer.Tile({
         source: new ol.source.OSM({
@@ -80,11 +78,10 @@ $(function () {
         })
     })
 
-    var map = new ol.Map({
+    window.map = new ol.Map({
         target: 'map',
         layers: [
             osmLayer,
-            // vectorHeatmapLayer
             googleLayer,
             vectorLayer,
             vectorLayer4Stations
@@ -124,47 +121,13 @@ $(function () {
     });
 
     var changeMarker = function (coordinate) {
-        //TODO - drow circle ?
-        // var circle = new ol.geom.Circle(coordinate, 100);
-        // var pointFeatures = [new ol.Feature(circle)];
-        // vectorSource.addFeatures(pointFeatures);
-
         startMarker.getGeometry().setCoordinates(coordinate);
-
         enableDisableSaveButton(true);
     }
 
     var enableDisableSaveButton = function (isEnabled) {
         $("#save-location").prop('disabled', !isEnabled);
     }
-
-    var addData = function (coordinates, weight) {
-        coordinates[0] = Number(coordinates[0]);
-        coordinates[1] = Number(coordinates[1]);
-        var coord = ol.proj.transform(coordinates, 'EPSG:4326', 'EPSG:3857');
-        // var coord = ol.proj.transform(coordinates, 'EPSG:4326', 'EPSG:4326');
-        var lonLat = new ol.geom.Point(coord);
-
-        if (typeof weight != "number") {
-            if (typeof weight == "string")
-                weight = 0.5;
-            else if (typeof weight == "boolean" && weight == true)
-                weight = 0.5;
-        } else if (weight > 1) {
-            weight = weight / 100;
-        } else {
-
-        }
-
-        var pointFeature = new ol.Feature({
-            geometry: lonLat,
-            weight: weight // e.g. temperature
-        });
-
-        vectorSource.addFeatures([pointFeature]);
-    }
-
-    //window.map = map;
 
     // popup
     //var popup = new ol.Overlay.Popup();
@@ -250,7 +213,6 @@ $(function () {
 
     setLayer(localStorage.getItem('selected-layer'))
 
-
     //durakları çek
     $.ajax({
         dataType: "json",
@@ -268,7 +230,7 @@ $(function () {
 
             geom = new ol.geom.Circle(
                 ol.proj.transform([duraklar[i].py, duraklar[i].px], 'EPSG:4326', 'EPSG:3857'),
-                25
+                30
             );
 
             feature = new ol.Feature(geom);

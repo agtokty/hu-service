@@ -35,6 +35,18 @@ CREATE TABLE public.station (
   CONSTRAINT name_unq UNIQUE (adi)
 );
 
+CREATE TABLE public.route (
+  ID SERIAL PRIMARY KEY,
+  name VARCHAR,
+  description VARCHAR,
+  start VARCHAR,
+  geojson VARCHAR,
+  geom geography,
+  total_passenger smallint DEFAULT 0,
+  expected_passenger smallint DEFAULT 0,
+  is_active boolean DEFAULT true
+);
+
 
 --helper queries
 

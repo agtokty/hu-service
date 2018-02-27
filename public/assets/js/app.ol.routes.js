@@ -2,30 +2,6 @@ $(function () {
     var mapHeight = $("body").height() - 70;
     $("#map").height(mapHeight);
 
-
-    var osmLayer = new ol.layer.Tile({
-        source: new ol.source.OSM(),
-    });
-
-    var circle = new ol.geom.Circle(
-        ol.proj.transform([32.9257, 39.9434], 'EPSG:4326', 'EPSG:3857'),
-        1000
-    );
-
-    var defaultZoom = 10;
-    var defaultLonLatCenter = [32.7615216, 39.908144];
-
-    var vectorSource = new ol.source.Vector({
-        projection: 'EPSG:4326'
-    });
-
-    var vectorLayer = new ol.layer.Vector({
-        source: vectorSource,
-        // style: function (feature) {
-        //     return styles[feature.get('type')];
-        // }
-    });
-
     var styles = {
         'icon': new ol.style.Style({
             image: new ol.style.Icon({
@@ -37,6 +13,34 @@ $(function () {
         })
     };
 
+    var circleStyle = new ol.style.Style({
+        stroke: new ol.style.Stroke({
+            color: 'rgba(0, 0, 0, 0.4)',
+            width: 3
+        }),
+        fill: new ol.style.Fill({
+            color: 'rgba(0, 255, 0, 0.4)'
+        })
+    });
+
+    var osmLayer = new ol.layer.Tile({
+        source: new ol.source.OSM(),
+    });
+
+    var defaultZoom = 10;
+    var defaultLonLatCenter = [32.7615216, 39.908144];
+
+    var vectorSource4Stations = new ol.source.Vector({
+        projection: 'EPSG:4326'
+    });
+
+    var vectorLayer4Stations = new ol.layer.Vector({
+        source: vectorSource4Stations,
+        style: circleStyle
+    });
+
+
+
     var googleLayer = new ol.layer.Tile({
         source: new ol.source.OSM({
             url: 'http://mt{0-3}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
@@ -47,12 +51,12 @@ $(function () {
         })
     })
 
-    var map = new ol.Map({
+    window.map = new ol.Map({
         target: 'map',
         layers: [
             osmLayer,
             googleLayer,
-            vectorLayer
+            vectorLayer4Stations
         ],
         view: new ol.View({
             center: ol.proj.fromLonLat(defaultLonLatCenter),
@@ -146,24 +150,9 @@ $(function () {
             feature = new ol.Feature(geom);
             featuresDuraklar.push(feature);
 
-            // var coordinates = [duraklar[i].py, duraklar[i].px];
-            // var coord = ol.proj.transform(coordinates, 'EPSG:4326', 'EPSG:3857');
-            // var lonLat = new ol.geom.Point(coord);
-            // var pointFeature = new ol.Feature({
-            //     geometry: lonLat,
-            //     weight: 1
-            // });
-            // vectorSource.addFeatures([pointFeature]);
-
-            // var nokta = [duraklar[i].px, duraklar[i].py];
-            // var circle = new ol.geom.Circle(
-            //     ol.proj.transform(nokta, 'EPSG:4326', 'EPSG:3857'),
-            //     10000
-            // );
-            // featuresDuraklar.push(new ol.Feature(circle));
         }
 
-        vectorSource.addFeatures(featuresDuraklar);
+        vectorSource4Stations.addFeatures(featuresDuraklar);
     }
 
 })
