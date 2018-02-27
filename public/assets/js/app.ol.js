@@ -47,6 +47,18 @@ $(function () {
         }
     });
 
+    var vectorSource4Stations = new ol.source.Vector({
+        projection: 'EPSG:4326'
+    });
+
+    var vectorLayer4Stations = new ol.layer.Vector({
+        source: vectorSource4Stations,
+        // style: function (feature) {
+        //     return styles[feature.get('type')];
+        // }
+    });
+
+
     var styles = {
         'icon': new ol.style.Style({
             image: new ol.style.Icon({
@@ -74,7 +86,8 @@ $(function () {
             osmLayer,
             // vectorHeatmapLayer
             googleLayer,
-            vectorLayer
+            vectorLayer,
+            vectorLayer4Stations
         ],
         view: new ol.View({
             center: ol.proj.fromLonLat(defaultLonLatCenter),
@@ -89,16 +102,16 @@ $(function () {
     var zoomslider = new ol.control.ZoomSlider();
     // map.addControl(zoomslider);
 
-    map.on("click", function (event) {
-        var coords = ol.proj.transform(event.coordinate, 'EPSG:3857', 'EPSG:4326');
-        var v = event.map.getView();
-        if (DEBUG_MODE) {
-            console.log("zoom " + v.getZoom());
-            console.log(coords);
-        }
+    // map.on("click", function (event) {
+    //     var coords = ol.proj.transform(event.coordinate, 'EPSG:3857', 'EPSG:4326');
+    //     var v = event.map.getView();
+    //     if (DEBUG_MODE) {
+    //         console.log("zoom " + v.getZoom());
+    //         console.log(coords);
+    //     }
 
-        changeMarker(event.coordinate)
-    });
+    //     changeMarker(event.coordinate)
+    // });
 
     map.on("dblclick", function (event) {
         var coords = ol.proj.transform(event.coordinate, 'EPSG:3857', 'EPSG:4326');
@@ -179,10 +192,6 @@ $(function () {
         }, 3000);
     });
 
-    $("#history").on("click", function () {
-        // alert("history clicked");
-    })
-
     $("#save-location").on("click", function () {
 
         var coords = startMarker.getGeometry().getCoordinates()
@@ -240,5 +249,66 @@ $(function () {
     }
 
     setLayer(localStorage.getItem('selected-layer'))
+
+
+    //durakları çek
+    $.ajax({
+        dataType: "json",
+        url: "/api/station",
+    }).done(function (data) {
+        addStationCircle(data);
+    });
+
+    var addStationCircle = function (duraklar) {
+
+        var featuresDuraklar = [];
+        var i, geom, feature;
+
+        for (i = 0; i < duraklar.length; i++) {
+
+            geom = new ol.geom.Circle(
+                ol.proj.transform([duraklar[i].py, duraklar[i].px], 'EPSG:4326', 'EPSG:3857'),
+                25
+            );
+
+            feature = new ol.Feature(geom);
+            feature.set("data", duraklar[i]);
+            featuresDuraklar.push(feature);
+        }
+
+        vectorSource4Stations.addFeatures(featuresDuraklar);
+    }
+
+
+    var select = new ol.interaction.Select({
+        condition: ol.events.condition.click
+    });
+
+    // var select = new ol.interaction.Select({
+    //     condition: ol.events.condition.pointerMove
+    // });
+
+    map.addInteraction(select);
+    select.on('select', function (e) {
+        // console.log(e);
+        if (e && e.selected && e.selected[0] && e.selected[0].getGeometry()) {
+            var a = e.selected[0]
+            var geom = e.selected[0].getGeometry()
+            geom.getCenter()
+
+            // var coords = ol.proj.transform(geom.getCenter(), 'EPSG:3857', 'EPSG:4326');
+
+            changeMarker(geom.getCenter())
+
+
+            var ff = e.target.getFeatures()
+            var fatures = ff.getArray();
+            var data = fatures[0].get("data");
+
+            $("#message-selected-station").html("Seçilen durak : <b>" + data["adi"] + "</b> - " + data["yeri"]);
+            console.log(data);
+        }
+    });
+
 
 });

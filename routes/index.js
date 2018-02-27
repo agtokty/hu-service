@@ -16,7 +16,7 @@ router.get('/', function (req, res) {
             pugOptions.savedData = {
                 lat: data.lat,
                 lon: data.lon,
-                note: data.note
+                note: data.note,
             };
             pugOptions.saved = true;
         }
