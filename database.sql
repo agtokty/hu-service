@@ -35,6 +35,14 @@ CREATE TABLE public.station (
   CONSTRAINT name_unq UNIQUE (adi)
 );
 
+CREATE TABLE public.station_distance (
+  adi VARCHAR,
+  distance double precision,
+  duration double precision,
+  weight  double precision
+  CONSTRAINT name_unq UNIQUE (adi)
+);
+
 CREATE TABLE public.route (
   ID SERIAL PRIMARY KEY,
   name VARCHAR,
