@@ -66,8 +66,6 @@ $(function () {
         style: circleStyle
     });
 
-
-
     var googleLayer = new ol.layer.Tile({
         source: new ol.source.OSM({
             url: 'http://mt{0-3}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
@@ -97,18 +95,6 @@ $(function () {
     });
 
     var zoomslider = new ol.control.ZoomSlider();
-    // map.addControl(zoomslider);
-
-    // map.on("click", function (event) {
-    //     var coords = ol.proj.transform(event.coordinate, 'EPSG:3857', 'EPSG:4326');
-    //     var v = event.map.getView();
-    //     if (DEBUG_MODE) {
-    //         console.log("zoom " + v.getZoom());
-    //         console.log(coords);
-    //     }
-
-    //     changeMarker(event.coordinate)
-    // });
 
     map.on("dblclick", function (event) {
         var coords = ol.proj.transform(event.coordinate, 'EPSG:3857', 'EPSG:4326');
@@ -241,27 +227,18 @@ $(function () {
         vectorSource4Stations.addFeatures(featuresDuraklar);
     }
 
-
     var select = new ol.interaction.Select({
         condition: ol.events.condition.click
     });
 
-    // var select = new ol.interaction.Select({
-    //     condition: ol.events.condition.pointerMove
-    // });
-
     map.addInteraction(select);
     select.on('select', function (e) {
-        // console.log(e);
         if (e && e.selected && e.selected[0] && e.selected[0].getGeometry()) {
             var a = e.selected[0]
             var geom = e.selected[0].getGeometry()
             geom.getCenter()
 
-            // var coords = ol.proj.transform(geom.getCenter(), 'EPSG:3857', 'EPSG:4326');
-
             changeMarker(geom.getCenter())
-
 
             var ff = e.target.getFeatures()
             var fatures = ff.getArray();

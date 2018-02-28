@@ -3,6 +3,24 @@ $(function () {
     var defaultZoom = 10;
     var defaultLonLatCenter = [32.7615216, 39.908144];
 
+    var styles = {
+        route: new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                width: 6, color: [40, 40, 40, 0.8]
+            })
+        })
+    };
+
+    var circleStyle = new ol.style.Style({
+        stroke: new ol.style.Stroke({
+            color: 'rgba(0, 0, 0, 0.4)',
+            width: 3
+        }),
+        fill: new ol.style.Fill({
+            color: 'rgba(0, 255, 0, 0.4)'
+        })
+    });
+
     var mapHeight = $("body").height() - 70;
     $("#map").height(mapHeight);
 
@@ -11,48 +29,13 @@ $(function () {
     });
 
     var vectorSource4Stations = new ol.source.Vector({
-        projection: 'EPSG:4326'
+        projection: 'EPSG:4326',
     });
 
-    var vectorLayer = new ol.layer.Vector({
+    var vectorLayer4Stations = new ol.layer.Vector({
         source: vectorSource4Stations,
-        // style: function (feature) {
-        //     return styles[feature.get('type')];
-        // }
+        style: circleStyle
     });
-
-    var styles = {
-        route: new ol.style.Style({
-            stroke: new ol.style.Stroke({
-                width: 6, color: [40, 40, 40, 0.8]
-            })
-        }),
-        driving: new ol.style.Style({
-            stroke: new ol.style.Stroke({
-                width: 6, color: [200, 40, 40, 0.8]
-            })
-        }),
-        car: new ol.style.Style({
-            stroke: new ol.style.Stroke({
-                width: 6, color: [200, 200, 40, 0.8]
-            })
-        }),
-        walk: new ol.style.Style({
-            stroke: new ol.style.Stroke({
-                width: 6, color: [40, 200, 100, 0.8]
-            })
-        }),
-        bike: new ol.style.Style({
-            stroke: new ol.style.Stroke({
-                width: 6, color: [40, 200, 200, 0.8]
-            })
-        }),
-        foot: new ol.style.Style({
-            stroke: new ol.style.Stroke({
-                width: 6, color: [200, 200, 100, 0.8]
-            })
-        })
-    };
 
     var styleFunction = function (feature) {
         return styles[feature.getGeometry().getType()];
@@ -80,13 +63,13 @@ $(function () {
         layers: [
             osmLayer,
             googleLayer,
-            vectorLayer,
+            vectorLayer4Stations,
             routeVectorLayer
         ],
         view: new ol.View({
             center: ol.proj.fromLonLat(defaultLonLatCenter),
             zoom: defaultZoom,
-            minZoom: 10,
+            minZoom: 5,
             maxZoom: 19
             // projection : 'EPSG:4326'
         }),
@@ -100,29 +83,6 @@ $(function () {
         // console.log(coords);
     });
 
-    $(".map-layers").on("click", "a", function (e) {
-        if (e.target && e.target.id) {
-            setLayer(e.target.id);
-        }
-    })
-
-    var setLayer = function (layerName) {
-        if (!layerName)
-            return;
-        if (layerName == "google-layer") {
-            googleLayer.setVisible(true);
-        } else if (layerName == "osm-layer") {
-            googleLayer.setVisible(false);
-        }
-
-        $("#" + layerName).addClass("selected-layer");
-        $("#" + layerName).siblings().removeClass("selected-layer");
-
-        localStorage.setItem('selected-layer', layerName);
-    }
-
-    setLayer(localStorage.getItem('selected-layer'))
-
     //durakları çek
     $.ajax({
         dataType: "json",
@@ -132,16 +92,22 @@ $(function () {
     });
 
     var addStationCircle = function (duraklar) {
+
         var featuresDuraklar = [];
         var i, geom, feature;
+
         for (i = 0; i < duraklar.length; i++) {
+
             geom = new ol.geom.Circle(
                 ol.proj.transform([duraklar[i].py, duraklar[i].px], 'EPSG:4326', 'EPSG:3857'),
-                25
+                30
             );
+
             feature = new ol.Feature(geom);
+            feature.set("data", duraklar[i]);
             featuresDuraklar.push(feature);
         }
+
         vectorSource4Stations.addFeatures(featuresDuraklar);
     }
 
@@ -153,22 +119,27 @@ $(function () {
     }
 
     var SELECTED_STATIONS = {
-        START: {},
-        STOP: {},
+        ROUTE_ARRAY: [],
+        ROUTE_RESULTS: [],
+        ROUTE_RESULTS_GEOM: [],
         profile: "car",
         alternatives: false,
         steps: true,
         USE: function () {
-            if (!this.START || !this.START)
-                return console.log("START or/and STOP not defined");
+
+            if (this.ROUTE_ARRAY.length <= 1)
+                return console.log("Select at least 2 station");
+
+            var START = this.ROUTE_ARRAY[this.ROUTE_ARRAY.length - 2];
+            var STOP = this.ROUTE_ARRAY[this.ROUTE_ARRAY.length - 1];
 
             this.profile = $("#route-type").val() || this.profile;
             FindRoute({
                 profile: this.profile,
                 alternatives: this.alternatives,
                 steps: this.steps,
-                start: this.START,
-                stop: this.STOP
+                start: START,
+                stop: STOP
             }, function (result) {
 
                 if (!result)
@@ -176,17 +147,19 @@ $(function () {
 
                 if (result.routes && result.routes.length > 0) {
                     var route1 = result.routes[0];
+
+                    this.ROUTE_RESULTS.push(route1);
+
+                    // this.ROUTE_RESULTS_GEOM.push(utils.convertPolyLine(route1.geometry));
+
                     utils.createRoute(route1, vectorSource4Routes, this.profile);
-                    utils.createRouteInfo(route1, "#route-result");
+                    utils.createRouteInfo(this.ROUTE_RESULTS, "#route-result");
                 }
 
                 console.log(result);
             }.bind(this))
         }
     }
-
-
-    var ROUTE_ARRAY = [];
 
     var selectFor = SELECT_FOR.START;
 
@@ -225,23 +198,117 @@ $(function () {
     })
 
 
-    $("#start_stop").on("click", function (e) {
+    // $("#start_stop").on("click", function (e) {
+    //     var status = $(e.target).attr("status");
+    //     if (status == "start") {
+    //         selectFor = SELECT_FOR.START;
+    //         mapClickListenerKey = map.on("click", mapClickListener);
+    //         $(e.target).attr("status", "stop");
+    //     } else {
+    //         ol.Observable.unByKey(mapClickListenerKey);
+    //         vectorSource4Routes.clear();
+    //         $(e.target).attr("status", "start");
+    //     }
+    // });
 
-        var status = $(e.target).attr("status");
+    $("#back_route").on("click", function () {
+        utils.removeLastFeatureFromLayer(vectorSource4Routes);
 
-        if (status == "start") {
+        if (SELECTED_STATIONS.ROUTE_ARRAY.length > 0) {
+            SELECTED_STATIONS.ROUTE_ARRAY.pop();
+            SELECTED_STATIONS.ROUTE_RESULTS.pop();
 
-            selectFor = SELECT_FOR.START;
-            mapClickListenerKey = map.on("click", mapClickListener);
+            if (SELECTED_STATIONS.ROUTE_ARRAY.length <= 1) {
+                $("#back_route").prop("disabled", true)
+                SELECTED_STATIONS.ROUTE_ARRAY = [];
+            }
+        }
+    })
 
-            $(e.target).attr("status", "stop");
-        } else {
+    $("#add_route").on("click", function () {
 
-            ol.Observable.unByKey(mapClickListenerKey);
-            vectorSource4Routes.clear();
-            $(e.target).attr("status", "start");
+        $("#add_route").prop("disabled", true);
+
+        if (SELECTED_STATIONS.ROUTE_ARRAY.length > 0)
+            console.log(SELECTED_STATIONS.ROUTE_ARRAY);
+
+        if (SELECTED_STATIONS.ROUTE_RESULTS.length > 0) {
+            console.log(SELECTED_STATIONS.ROUTE_RESULTS);
+
+            var geoArray = [];
+            var geoArray2 = [];
+            for (var i = 0; i < SELECTED_STATIONS.ROUTE_RESULTS.length; i++) {
+                const element = SELECTED_STATIONS.ROUTE_RESULTS[i];
+
+                var line = utils.convertPolyLine(element.geometry);
+                geoArray.push(line);
+
+                var lineFeature = new ol.Feature({
+                    geometry: line,
+                });
+
+                geoArray2.push(lineFeature)
+            }
+
+            console.log(geoArray2);
+
+            var geojson = new ol.format.GeoJSON({})
+            var resultString = geojson.writeFeatures(geoArray2, {
+                dataProjection: 'EPSG:4326',
+                featureProjection: 'EPSG:3857',
+                decimals: 5
+            });
+            // var resultObj = geojson.writeFeaturesObject(geoArray2, {});
+
+            var data = {
+                geojson: resultString
+            }
+
+            $.ajax({
+                url: '/api/route',
+                type: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (data, textStatus, jQxhr) {
+                    enableDisableSaveButton(false);
+
+                    swal("İşlem Tamamlandı", "Yeni rota eklendi!", "success");
+                },
+                error: function (jqXhr, textStatus, errorThrown) {
+                    if (DEBUG_MODE)
+                        console.log(errorThrown);
+                    swal("İşlem Tamamlanamadı", "Lütfen sayfayı yeniden yükleyip tekrar deneyiniz!", "error");
+                    $("#add_route").prop("disabled", false);
+                }
+            });
+
         }
 
+    })
+
+    var select = new ol.interaction.Select({
+        condition: ol.events.condition.click
+    });
+
+    map.addInteraction(select);
+    select.on('select', function (e) {
+        if (e && e.selected && e.selected[0] && e.selected[0].getGeometry()) {
+            var a = e.selected[0]
+            var geom = e.selected[0].getGeometry()
+            geom.getCenter()
+
+            var ff = e.target.getFeatures()
+            var fatures = ff.getArray();
+            var data = fatures[0].get("data");
+            console.log(data);
+
+            SELECTED_STATIONS.ROUTE_ARRAY.push([data.py, data.px])
+            SELECTED_STATIONS.USE();
+
+            if (SELECTED_STATIONS.ROUTE_ARRAY.length > 1) {
+                $("#back_route").prop("disabled", false)
+            }
+        }
     });
 
     var FindRoute = function (options, callback) {
@@ -273,38 +340,6 @@ $(function () {
         }
     }
 
-    var AddRouteToLayer = function (route) {
-
-        if (route && route.legs && route.legs.length > 0) {
-            var leg1 = route.legs[0];
-            if (leg1) {
-                console.log(leg1);
-
-                var featuresRouteParts = [];
-                var i, geom, feature;
-
-                for (var i = 0; i < leg1.steps.length; i++) {
-                    const element = leg1.steps[i];
-
-
-                    var coordinates = element.geometry.coordinates;
-
-                    var feature = new ol.Feature({
-                        geometry: new ol.geom.LineString(coordinates),
-                        name: 'Line'
-                    })
-
-                    featuresRouteParts.push(feature);
-
-                }
-
-                vectorSource4Routes.addFeatures(featuresRouteParts);
-
-            }
-        }
-
-    }
-
     var utils = {
         getNearest: function (coord) {
             var coord4326 = utils.to4326(coord);
@@ -327,6 +362,16 @@ $(function () {
         //     feature.setStyle(styles.icon);
         //     vectorSource.addFeature(feature);
         // },
+        convertPolyLine: function (geometry) {
+            var route = new ol.format.Polyline({
+                factor: 1e5
+            }).readGeometry(geometry, {
+                dataProjection: 'EPSG:4326',
+                featureProjection: 'EPSG:3857'
+            });
+
+            return route;
+        },
         createRoute: function (route, vectorSource, type) {
             // route is ol.geom.LineString
             var route = new ol.format.Polyline({
@@ -342,13 +387,34 @@ $(function () {
             feature.setStyle(styles[type] || styles.route);
             vectorSource.addFeature(feature);
         },
+        removeLastFeatureFromLayer: function (vectorLayer) {
+            var features = vectorLayer.getFeatures();
+            var f1 = features[features.length - 1];
+            vectorLayer.removeFeature(f1);
+        },
         createRouteInfo: function (route, selector) {
-            var distance = $("<p>").text("Distance : " + route.distance);
-            var duration = $("<p>").text("Duration : " + route.duration);
-            var weight = $("<p>").text("Weight : " + route.weight);
+
+            var distance = 0, duration = 0, weight = 0;
+
+            if (route instanceof Array) {
+                for (var i = 0; i < route.length; i++) {
+                    const element = route[i];
+                    distance += element.distance;
+                    duration += element.duration;
+                    weight += element.weight;
+                }
+            } else {
+                distance = route.distance;
+                duration = route.duration;
+                weight = route.weight;
+            }
+
+            var distanceElement = $("<p>").text("Distance : " + distance);
+            var durationElement = $("<p>").text("Duration : " + duration);
+            var weightElement = $("<p>").text("Weight : " + weight);
 
             $(selector).empty();
-            $(selector).append(distance).append(duration).append(weight);
+            $(selector).append(distanceElement).append(durationElement).append(weightElement);
         },
         to4326: function (coord) {
             return ol.proj.transform([
@@ -356,5 +422,28 @@ $(function () {
             ], 'EPSG:3857', 'EPSG:4326');
         }
     };
+
+    $(".map-layers").on("click", "a", function (e) {
+        if (e.target && e.target.id) {
+            setLayer(e.target.id);
+        }
+    })
+
+    var setLayer = function (layerName) {
+        if (!layerName)
+            return;
+        if (layerName == "google-layer") {
+            googleLayer.setVisible(true);
+        } else if (layerName == "osm-layer") {
+            googleLayer.setVisible(false);
+        }
+
+        $("#" + layerName).addClass("selected-layer");
+        $("#" + layerName).siblings().removeClass("selected-layer");
+
+        localStorage.setItem('selected-layer', layerName);
+    }
+
+    setLayer(localStorage.getItem('selected-layer'))
 
 })

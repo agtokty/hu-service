@@ -49,6 +49,31 @@ router.get('/route/all', function (req, res) {
     })
 });
 
+router.post('/route', function (req, res) {
+    //TODO - validate data
+
+    var postData = req.body;
+
+    postData.description = postData.description || "";
+    postData.name = postData.name || "";
+    postData.start = postData.start || "";
+    postData.total_passenger = postData.total_passenger || 0;
+    postData.expected_passenger = postData.expected_passenger || 0;
+    postData.is_active = (postData.is_active == true || postData.is_active == false) ? postData.is_active : false;
+
+    if (!postData.geojson)
+        return res.status(400).send({ error: "geojson can not be empty" });
+
+    db.insertRoute(postData, function (err, data) {
+        if (err) {
+            res.sendStatus(500);
+        } else {
+            res.sendStatus(201);
+        }
+    });
+
+});
+
 router.post('/location', function (req, res) {
     //TODO - validate data
 

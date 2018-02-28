@@ -99,6 +99,20 @@ function getAllRoutes(cb) {
         });
 }
 
+function insertRoute(data, cb) {
+    database.none('insert into route(name, description, start, geojson, total_passenger, expected_passenger, is_active)' +
+        ' values(${name}, ${description}, ${start}, ${geojson}, ${total_passenger}, ${expected_passenger}, ${is_active})', data)
+        .then(function () {
+            if (cb)
+                cb(null, { result: "ok" })
+        })
+        .catch(function (err) {
+            if (cb)
+                cb(err);
+        });
+}
+
+
 function getStationMinMaxId(cb) {
     database.any('select min(id) as min, max(id) as max from station')
         .then(function (data) {
@@ -160,5 +174,6 @@ module.exports = {
     resetAllStations: resetAllStations,
     getStationMinMaxId: getStationMinMaxId,
     updateGeneratedWeights: updateGeneratedWeights,
-    getAllRoutes: getAllRoutes
+    getAllRoutes: getAllRoutes,
+    insertRoute: insertRoute
 };
