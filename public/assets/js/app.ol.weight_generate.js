@@ -27,7 +27,7 @@ $(function () {
         url: "/api/station",
     }).done(function (data) {
         // addStationCircle(data);
-        utils.addCircleData(data, stationVectorSource, { radius: 85 });
+        utils.addCircleData(data, stationVectorSource, { radius: 85, radius_property : "weight" });
     });
 
     $("#start-process").on("click", function () {

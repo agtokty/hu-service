@@ -137,6 +137,7 @@ $(function () {
             var featureArray = [];
             var geom, feature;
 
+            var _minRadius = 30;
             var defaultRadius = 30;
 
             if (options) {
@@ -145,6 +146,16 @@ $(function () {
             }
 
             for (var i = 0; i < circleDataArray.length; i++) {
+
+                if (options) {
+                    if (options.radius_property &&
+                        circleDataArray[i][options.radius_property])
+                        defaultRadius = Number(circleDataArray[i][options.radius_property]) * 15
+
+                    if (defaultRadius < _minRadius)
+                        defaultRadius = _minRadius
+                }
+
                 geom = new ol.geom.Circle(
                     ol.proj.transform([circleDataArray[i].py, circleDataArray[i].px], 'EPSG:4326', 'EPSG:3857'),
                     defaultRadius

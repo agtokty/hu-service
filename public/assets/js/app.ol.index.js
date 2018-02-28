@@ -47,7 +47,7 @@ $(function () {
         }
     });
 
-   
+
 
     var stationVectorSource = new ol.source.Vector({
         projection: 'EPSG:4326'
@@ -112,7 +112,7 @@ $(function () {
         url: "/api/station",
     }).done(function (data) {
         // addStationCircle(data);
-        utils.addCircleData(data, stationVectorSource);
+        utils.addCircleData(data, stationVectorSource, { radius: 85, radius_property: "weight" });
     });
 
     // var addStationCircle = function (duraklar) {
@@ -152,7 +152,9 @@ $(function () {
             var fatures = ff.getArray();
             var data = fatures[0].get("data");
 
+            
             $("#message-selected-station").html("Seçilen durak : <b>" + data["adi"] + "</b> - " + data["yeri"]);
+
             console.log(data);
         }
     });
