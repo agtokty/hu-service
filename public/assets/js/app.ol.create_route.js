@@ -270,7 +270,7 @@ $(function () {
                 contentType: 'application/json',
                 data: JSON.stringify(data),
                 success: function (data, textStatus, jQxhr) {
-                    enableDisableSaveButton(false);
+                    // enableDisableSaveButton(false);
 
                     swal("İşlem Tamamlandı", "Yeni rota eklendi!", "success");
                 },
