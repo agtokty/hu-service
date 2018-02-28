@@ -1,0 +1,36 @@
+extends ./map_base
+
+block content
+	script#delete1.
+		var savedData_saved = #{saved};
+	- if (saved == true)
+		script#delete.
+			var savedData_lat = #{savedData.lat};
+			var savedData_lon = #{savedData.lon};
+			var savedData_note = "#{savedData.note}";
+			
+	.col-md-12.pad-r-l-0
+		block map_left_panel
+			include ./include/search
+		block map_righ_panel
+			#floating-panel-right
+				- var buttonText = "Kaydet"
+				- if (saved == false)
+					span#message-span
+						| Hoşgeldiniz! Servise bindiğiniz noktayı haritadan tıklayarak belirledikten sonra kaydet butonuna basınız.
+				- else
+					- buttonText = "Güncelle"
+					span#message-span 
+						| Servise bindiğiniz noktayı değiştirmek için harita üzerinde yeni bir yere tıkladıktan sonra güncelle butonuna basınız.
+				hr
+				span#message-selected-station
+				br
+				button.button1.btn.btn-info.btn-block#save-location(disabled)=buttonText
+		#map.map
+
+block child_pagecss
+	//- link(rel='stylesheet', type='text/css', href="https://openlayers.org/en/v4.6.4/css/ol.css")
+
+block child_pagejs
+	script(src='../../../assets/js/app.ol.index.js', type='text/javascript')
+	

@@ -1,0 +1,9 @@
+#map-search-panel
+	.input-group
+		.input-group-btn(title="Harita altlık katmanı değiştir")
+			button.btn.btn-primary.dropdown-toggle(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+				i.ft-layers
+			.dropdown-menu.map-layers(x-placement='bottom-start', style='position: absolute; transform: translate3d(0px, 40px, 0px); top: 0px; left: 0px; will-change: transform;')
+				a.dropdown-item.selected-layer(name="Google" id="google-layer") Google
+				a.dropdown-item(name="OSM" id="osm-layer") Open Street Map
+		input.form-control.gcd-gl-input#gcd-input-query(type=text placeholder="Haritada ara")

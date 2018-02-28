@@ -1,0 +1,16 @@
+extends ./map_base
+
+block content
+	.col-md-12.pad-r-l-0
+		block map_left_panel
+			//- include ./include/search
+		block map_righ_panel
+			#floating-panel-right
+		#map.map
+
+block child_pagecss
+	//- link(rel='stylesheet', type='text/css', href="https://openlayers.org/en/v4.6.4/css/ol.css")
+
+block child_pagejs
+	script(src='../../../assets/js/app.ol.routes2.js', type='text/javascript')
+	

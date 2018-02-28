@@ -10,12 +10,12 @@ $(function () {
         source: new ol.source.OSM(),
     });
 
-    var vectorSource4Stations = new ol.source.Vector({
+    var stationVectorSource = new ol.source.Vector({
         projection: 'EPSG:4326'
     });
 
     var vectorLayer = new ol.layer.Vector({
-        source: vectorSource4Stations,
+        source: stationVectorSource,
         // style: function (feature) {
         //     return styles[feature.get('type')];
         // }
@@ -57,11 +57,11 @@ $(function () {
     var styleFunction = function (feature) {
         return styles[feature.getGeometry().getType()];
     };
-    var vectorSource4Routes = new ol.source.Vector({
+    var routeVectorSource = new ol.source.Vector({
         projection: 'EPSG:4326'
     });
     var routeVectorLayer = new ol.layer.Vector({
-        source: vectorSource4Routes,
+        source: routeVectorSource,
         // style: styleFunction
     });
 
@@ -184,7 +184,7 @@ $(function () {
             featuresDuraklar.push(feature);
         }
 
-        vectorSource4Stations.addFeatures(featuresDuraklar);
+        stationVectorSource.addFeatures(featuresDuraklar);
     }
 
     var utils = {

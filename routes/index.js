@@ -20,7 +20,7 @@ router.get('/', function (req, res) {
             };
             pugOptions.saved = true;
         }
-        res.render('pages/map/map_index', pugOptions);
+        res.render('pages/map/map_index2', pugOptions);
     })
 
     // res.render('pages/map/map_index', pugOptions);

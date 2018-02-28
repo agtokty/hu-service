@@ -28,23 +28,23 @@ $(function () {
         source: new ol.source.OSM(),
     });
 
-    var vectorSource4Stations = new ol.source.Vector({
+    var stationVectorSource = new ol.source.Vector({
         projection: 'EPSG:4326',
     });
 
-    var vectorLayer4Stations = new ol.layer.Vector({
-        source: vectorSource4Stations,
+    var stationVectorLayer = new ol.layer.Vector({
+        source: stationVectorSource,
         style: circleStyle
     });
 
     var styleFunction = function (feature) {
         return styles[feature.getGeometry().getType()];
     };
-    var vectorSource4Routes = new ol.source.Vector({
+    var routeVectorSource = new ol.source.Vector({
         projection: 'EPSG:4326'
     });
     var routeVectorLayer = new ol.layer.Vector({
-        source: vectorSource4Routes,
+        source: routeVectorSource,
         // style: styleFunction
     });
 
@@ -63,7 +63,7 @@ $(function () {
         layers: [
             osmLayer,
             googleLayer,
-            vectorLayer4Stations,
+            stationVectorLayer,
             routeVectorLayer
         ],
         view: new ol.View({
@@ -108,7 +108,7 @@ $(function () {
             featuresDuraklar.push(feature);
         }
 
-        vectorSource4Stations.addFeatures(featuresDuraklar);
+        stationVectorSource.addFeatures(featuresDuraklar);
     }
 
     //Find and draw route
@@ -152,7 +152,7 @@ $(function () {
 
                     // this.ROUTE_RESULTS_GEOM.push(utils.convertPolyLine(route1.geometry));
 
-                    utils.createRoute(route1, vectorSource4Routes, this.profile);
+                    utils.createRoute(route1, routeVectorSource, this.profile);
                     utils.createRouteInfo(this.ROUTE_RESULTS, "#route-result");
                 }
 
@@ -206,13 +206,13 @@ $(function () {
     //         $(e.target).attr("status", "stop");
     //     } else {
     //         ol.Observable.unByKey(mapClickListenerKey);
-    //         vectorSource4Routes.clear();
+    //         routeVectorSource.clear();
     //         $(e.target).attr("status", "start");
     //     }
     // });
 
     $("#back_route").on("click", function () {
-        utils.removeLastFeatureFromLayer(vectorSource4Routes);
+        utils.removeLastFeatureFromLayer(routeVectorSource);
 
         if (SELECTED_STATIONS.ROUTE_ARRAY.length > 0) {
             SELECTED_STATIONS.ROUTE_ARRAY.pop();

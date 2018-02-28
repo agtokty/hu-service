@@ -10,12 +10,12 @@ $(function () {
         source: new ol.source.OSM(),
     });
 
-    var vectorSource4Stations = new ol.source.Vector({
+    var stationVectorSource = new ol.source.Vector({
         projection: 'EPSG:4326'
     });
 
     var vectorLayer = new ol.layer.Vector({
-        source: vectorSource4Stations,
+        source: stationVectorSource,
         // style: function (feature) {
         //     return styles[feature.get('type')];
         // }
@@ -57,11 +57,11 @@ $(function () {
     var styleFunction = function (feature) {
         return styles[feature.getGeometry().getType()];
     };
-    var vectorSource4Routes = new ol.source.Vector({
+    var routeVectorSource = new ol.source.Vector({
         projection: 'EPSG:4326'
     });
     var routeVectorLayer = new ol.layer.Vector({
-        source: vectorSource4Routes,
+        source: routeVectorSource,
         // style: styleFunction
     });
 
@@ -147,7 +147,7 @@ $(function () {
             featuresDuraklar.push(feature);
         }
 
-        vectorSource4Stations.addFeatures(featuresDuraklar);
+        stationVectorSource.addFeatures(featuresDuraklar);
     }
 
     //Find and draw route
@@ -181,7 +181,7 @@ $(function () {
 
                 if (result.routes && result.routes.length > 0) {
                     var route1 = result.routes[0];
-                    utils.createRoute(route1, vectorSource4Routes, this.profile);
+                    utils.createRoute(route1, routeVectorSource, this.profile);
                     utils.createRouteInfo(route1, "#route-result");
                 }
 
@@ -233,7 +233,7 @@ $(function () {
     })
 
     $("#clear-routes").on("click", function () {
-        vectorSource4Routes.clear();
+        routeVectorSource.clear();
 
         $("#route-result").empty();
     });
@@ -308,7 +308,7 @@ $(function () {
 
                 }
 
-                vectorSource4Routes.addFeatures(featuresRouteParts);
+                routeVectorSource.addFeatures(featuresRouteParts);
 
             }
         }

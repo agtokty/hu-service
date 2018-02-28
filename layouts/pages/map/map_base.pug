@@ -1,0 +1,88 @@
+extends ../../base
+
+//- Template customization
+//------------------------
+block templateConfig
+	- var templateCustom = "vertical-layout vertical-menu"
+	- var dataMenu = "vertical-menu"
+
+//- Page level customization
+//------------------------
+block pageConfig
+	- var logoType = 'light'
+
+block navbarConfig
+	- var navbarPosition = "navbar-fixed-top"
+	- var navbarColor = "navbar-semi-dark"
+	- var navbarShadow = true
+
+block verticalMenuConfig
+	- var menuType = "menu-fixed"
+	- var menuColor = "menu-dark"
+	- var menuOpenType = "menu-accordion"
+	- var menuShadow = true
+
+block footerConfig
+	- var footerType = "footer-static"
+	- var footerColor = "footer-light"
+	- var footerBorder = true
+
+//- Template includes
+//-------------------
+
+
+block header
+	include ../../templates/sections/header/header.pug
+
+block main-menu
+	include ../../templates/sections/menu/vertical-menu.pug
+
+block page-header
+	//- if blankPage != true
+	//- 	include ../../pages/page-headers/breadcrumbs-basic.pug
+
+
+block content
+	.col-md-12.pad-r-l-0
+		block map_left_panel
+		block map_righ_panel
+		#map.map
+	//- .col-md-2
+	//- 	div
+
+block footer
+	include ../../templates/sections/footer/footer.pug
+
+//- Template specific dependency
+//------------------------------
+
+//- Vendor CSS
+//------------------------------
+//- Add Vendor specific CSS
+block vendorcss
+	link(rel='stylesheet', type='text/css', href='../../../app-assets/vendors/css/extensions/sweetalert.css')
+//- Page CSS
+//------------------------------
+
+//- Add custom page specific CSS
+block pagecss	
+	link(rel='stylesheet', type='text/css', href='../../../app-assets/css/core/menu/menu-types/vertical-menu.min.css')
+	link(rel='stylesheet', type='text/css', href='../../../app-assets/css/core/menu/menu-types/vertical-overlay-menu.css')
+	link(rel='stylesheet', type='text/css', href='../../../assets/css/map.css')
+	link(rel='stylesheet', type='text/css', href="https://openlayers.org/en/v4.6.4/css/ol.css")
+
+//- Vendor JS
+//------------------------------
+//- Add vendor specific JS
+block vendorjs
+	script(src='https://openlayers.org/en/v4.3.3/build/ol.js', type='text/javascript')
+	script(src='https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL', type='text/javascript')
+	script(src='../../../app-assets/vendors/js/extensions/sweetalert.min.js', type='text/javascript')
+
+//- Page JS
+//------------------------------
+//- Add custom page specific JS
+block pagejs
+	script(src='../../../app-assets/vendors/js/ol-geocoder-debug.js', type='text/javascript')
+	script(src='../../../assets/js/app.ol.js', type='text/javascript')
+	
