@@ -8,7 +8,7 @@ router.get('/', function (req, res) {
     pugOptions.pageTitle = "Örnek Rotalar";
     pugOptions.saved = false;
 
-    res.render('pages/map/map_routes2', pugOptions);
+    res.render('pages/map/map_routes', pugOptions);
 });
 
 module.exports = router;

@@ -13,7 +13,7 @@ router.get('/osrm', function (req, res) {
 
 router.get('/generate-weight', function (req, res) {
     var pugOptions = req.pugOptions;
-    pugOptions.pageTitle = "Ragele durak ağırlığı üretme sayfası";
+    pugOptions.pageTitle = "Rastgele durak ağırlığı üretme sayfası";
     pugOptions.saved = false;
 
     res.render('pages/map/tools_weight_generate', pugOptions);

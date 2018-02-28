@@ -47,7 +47,7 @@ $(function () {
         }
     });
 
-    map.getLayers().push(iconVectorLayer);
+   
 
     var stationVectorSource = new ol.source.Vector({
         projection: 'EPSG:4326'
@@ -58,6 +58,7 @@ $(function () {
         style: circleStyle
     });
 
+    map.getLayers().push(iconVectorLayer);
     map.getLayers().push(stationVectorLayer);
 
     var changeMarker = function (coordinate) {
@@ -110,28 +111,29 @@ $(function () {
         dataType: "json",
         url: "/api/station",
     }).done(function (data) {
-        addStationCircle(data);
+        // addStationCircle(data);
+        utils.addCircleData(data, stationVectorSource);
     });
 
-    var addStationCircle = function (duraklar) {
+    // var addStationCircle = function (duraklar) {
 
-        var featuresDuraklar = [];
-        var i, geom, feature;
+    //     var featuresDuraklar = [];
+    //     var i, geom, feature;
 
-        for (i = 0; i < duraklar.length; i++) {
+    //     for (i = 0; i < duraklar.length; i++) {
 
-            geom = new ol.geom.Circle(
-                ol.proj.transform([duraklar[i].py, duraklar[i].px], 'EPSG:4326', 'EPSG:3857'),
-                30
-            );
+    //         geom = new ol.geom.Circle(
+    //             ol.proj.transform([duraklar[i].py, duraklar[i].px], 'EPSG:4326', 'EPSG:3857'),
+    //             30
+    //         );
 
-            feature = new ol.Feature(geom);
-            feature.set("data", duraklar[i]);
-            featuresDuraklar.push(feature);
-        }
+    //         feature = new ol.Feature(geom);
+    //         feature.set("data", duraklar[i]);
+    //         featuresDuraklar.push(feature);
+    //     }
 
-        stationVectorSource.addFeatures(featuresDuraklar);
-    }
+    //     stationVectorSource.addFeatures(featuresDuraklar);
+    // }
 
     var select = new ol.interaction.Select({
         condition: ol.events.condition.click

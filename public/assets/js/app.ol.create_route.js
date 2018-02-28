@@ -21,13 +21,6 @@ $(function () {
         })
     });
 
-    var mapHeight = $("body").height() - 70;
-    $("#map").height(mapHeight);
-
-    var osmLayer = new ol.layer.Tile({
-        source: new ol.source.OSM(),
-    });
-
     var stationVectorSource = new ol.source.Vector({
         projection: 'EPSG:4326',
     });
@@ -44,72 +37,41 @@ $(function () {
         projection: 'EPSG:4326'
     });
     var routeVectorLayer = new ol.layer.Vector({
-        source: routeVectorSource,
-        // style: styleFunction
+        source: routeVectorSource
     });
 
-    var googleLayer = new ol.layer.Tile({
-        source: new ol.source.OSM({
-            url: 'http://mt{0-3}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
-            attributions: [
-                new ol.Attribution({ html: '© Google' }),
-                new ol.Attribution({ html: '<a href="https://developers.google.com/maps/terms">Terms of Use.</a>' })
-            ]
-        })
-    })
 
-    window.map = new ol.Map({
-        target: 'map',
-        layers: [
-            osmLayer,
-            googleLayer,
-            stationVectorLayer,
-            routeVectorLayer
-        ],
-        view: new ol.View({
-            center: ol.proj.fromLonLat(defaultLonLatCenter),
-            zoom: defaultZoom,
-            minZoom: 5,
-            maxZoom: 19
-            // projection : 'EPSG:4326'
-        }),
-        controls: [],
-    });
-
-    map.on("click", function (event) {
-        var coords = ol.proj.transform(event.coordinate, 'EPSG:3857', 'EPSG:4326');
-        var v = event.map.getView();
-        console.log("zoom " + v.getZoom());
-        // console.log(coords);
-    });
+    map.getLayers().push(stationVectorLayer);
+    map.getLayers().push(routeVectorLayer);
 
     //durakları çek
     $.ajax({
         dataType: "json",
         url: "/api/station",
     }).done(function (data) {
-        addStationCircle(data);
+        // addStationCircle(data);
+        utils.addCircleData(data, stationVectorSource);
     });
 
-    var addStationCircle = function (duraklar) {
+    // var addStationCircle = function (duraklar) {
 
-        var featuresDuraklar = [];
-        var i, geom, feature;
+    //     var featuresDuraklar = [];
+    //     var i, geom, feature;
 
-        for (i = 0; i < duraklar.length; i++) {
+    //     for (i = 0; i < duraklar.length; i++) {
 
-            geom = new ol.geom.Circle(
-                ol.proj.transform([duraklar[i].py, duraklar[i].px], 'EPSG:4326', 'EPSG:3857'),
-                30
-            );
+    //         geom = new ol.geom.Circle(
+    //             ol.proj.transform([duraklar[i].py, duraklar[i].px], 'EPSG:4326', 'EPSG:3857'),
+    //             30
+    //         );
 
-            feature = new ol.Feature(geom);
-            feature.set("data", duraklar[i]);
-            featuresDuraklar.push(feature);
-        }
+    //         feature = new ol.Feature(geom);
+    //         feature.set("data", duraklar[i]);
+    //         featuresDuraklar.push(feature);
+    //     }
 
-        stationVectorSource.addFeatures(featuresDuraklar);
-    }
+    //     stationVectorSource.addFeatures(featuresDuraklar);
+    // }
 
     //Find and draw route
     var SELECT_FOR = {
@@ -122,7 +84,6 @@ $(function () {
         ROUTE_ARRAY: [],
         ROUTE_RESULTS: [],
         ROUTE_RESULTS_GEOM: [],
-        profile: "car",
         alternatives: false,
         steps: true,
         USE: function () {
@@ -135,7 +96,7 @@ $(function () {
 
             this.profile = $("#route-type").val() || this.profile;
             FindRoute({
-                profile: this.profile,
+                profile: "route",
                 alternatives: this.alternatives,
                 steps: this.steps,
                 start: START,
@@ -152,7 +113,7 @@ $(function () {
 
                     // this.ROUTE_RESULTS_GEOM.push(utils.convertPolyLine(route1.geometry));
 
-                    utils.createRoute(route1, routeVectorSource, this.profile);
+                    utils.createRoute(route1, routeVectorSource, "route", styles.route);
                     utils.createRouteInfo(this.ROUTE_RESULTS, "#route-result");
                 }
 
@@ -196,20 +157,6 @@ $(function () {
 
         $(e.target).val("");
     })
-
-
-    // $("#start_stop").on("click", function (e) {
-    //     var status = $(e.target).attr("status");
-    //     if (status == "start") {
-    //         selectFor = SELECT_FOR.START;
-    //         mapClickListenerKey = map.on("click", mapClickListener);
-    //         $(e.target).attr("status", "stop");
-    //     } else {
-    //         ol.Observable.unByKey(mapClickListenerKey);
-    //         routeVectorSource.clear();
-    //         $(e.target).attr("status", "start");
-    //     }
-    // });
 
     $("#back_route").on("click", function () {
         utils.removeLastFeatureFromLayer(routeVectorSource);
@@ -340,110 +287,27 @@ $(function () {
         }
     }
 
-    var utils = {
-        getNearest: function (coord) {
-            var coord4326 = utils.to4326(coord);
-            return new Promise(function (resolve, reject) {
-                //make sure the coord is on street
-                fetch(url_osrm_nearest + coord4326.join()).then(function (response) {
-                    // Convert to JSON
-                    return response.json();
-                }).then(function (json) {
-                    if (json.code === 'Ok') resolve(json.waypoints[0].location);
-                    else reject();
-                });
-            });
-        },
-        // createFeature: function (coord) {
-        //     var feature = new ol.Feature({
-        //         type: 'place',
-        //         geometry: new ol.geom.Point(ol.proj.fromLonLat(coord))
-        //     });
-        //     feature.setStyle(styles.icon);
-        //     vectorSource.addFeature(feature);
-        // },
-        convertPolyLine: function (geometry) {
-            var route = new ol.format.Polyline({
-                factor: 1e5
-            }).readGeometry(geometry, {
-                dataProjection: 'EPSG:4326',
-                featureProjection: 'EPSG:3857'
-            });
-
-            return route;
-        },
-        createRoute: function (route, vectorSource, type) {
-            // route is ol.geom.LineString
-            var route = new ol.format.Polyline({
-                factor: 1e5
-            }).readGeometry(route.geometry, {
-                dataProjection: 'EPSG:4326',
-                featureProjection: 'EPSG:3857'
-            });
-            var feature = new ol.Feature({
-                type: type || 'route',
-                geometry: route
-            });
-            feature.setStyle(styles[type] || styles.route);
-            vectorSource.addFeature(feature);
-        },
-        removeLastFeatureFromLayer: function (vectorLayer) {
-            var features = vectorLayer.getFeatures();
-            var f1 = features[features.length - 1];
-            vectorLayer.removeFeature(f1);
-        },
-        createRouteInfo: function (route, selector) {
-
-            var distance = 0, duration = 0, weight = 0;
-
-            if (route instanceof Array) {
-                for (var i = 0; i < route.length; i++) {
-                    const element = route[i];
-                    distance += element.distance;
-                    duration += element.duration;
-                    weight += element.weight;
-                }
-            } else {
-                distance = route.distance;
-                duration = route.duration;
-                weight = route.weight;
+    utils.createRouteInfo = function (route, selector) {
+        var distance = 0, duration = 0, weight = 0;
+        if (route instanceof Array) {
+            for (var i = 0; i < route.length; i++) {
+                const element = route[i];
+                distance += element.distance;
+                duration += element.duration;
+                weight += element.weight;
             }
-
-            var distanceElement = $("<p>").text("Distance : " + distance);
-            var durationElement = $("<p>").text("Duration : " + duration);
-            var weightElement = $("<p>").text("Weight : " + weight);
-
-            $(selector).empty();
-            $(selector).append(distanceElement).append(durationElement).append(weightElement);
-        },
-        to4326: function (coord) {
-            return ol.proj.transform([
-                parseFloat(coord[0]), parseFloat(coord[1])
-            ], 'EPSG:3857', 'EPSG:4326');
+        } else {
+            distance = route.distance;
+            duration = route.duration;
+            weight = route.weight;
         }
+
+        var distanceElement = $("<p>").text("Distance : " + distance);
+        var durationElement = $("<p>").text("Duration : " + duration);
+        var weightElement = $("<p>").text("Weight : " + weight);
+
+        $(selector).empty();
+        $(selector).append(distanceElement).append(durationElement).append(weightElement);
     };
-
-    $(".map-layers").on("click", "a", function (e) {
-        if (e.target && e.target.id) {
-            setLayer(e.target.id);
-        }
-    })
-
-    var setLayer = function (layerName) {
-        if (!layerName)
-            return;
-        if (layerName == "google-layer") {
-            googleLayer.setVisible(true);
-        } else if (layerName == "osm-layer") {
-            googleLayer.setVisible(false);
-        }
-
-        $("#" + layerName).addClass("selected-layer");
-        $("#" + layerName).siblings().removeClass("selected-layer");
-
-        localStorage.setItem('selected-layer', layerName);
-    }
-
-    setLayer(localStorage.getItem('selected-layer'))
 
 })

@@ -118,4 +118,114 @@ $(function () {
 
     setLayer(localStorage.getItem('selected-layer'))
 
+    //TODO - change name
+    window.utils = {
+        getNearest: function (coord) {
+            var coord4326 = utils.to4326(coord);
+            return new Promise(function (resolve, reject) {
+                //make sure the coord is on street
+                fetch(url_osrm_nearest + coord4326.join()).then(function (response) {
+                    // Convert to JSON
+                    return response.json();
+                }).then(function (json) {
+                    if (json.code === 'Ok') resolve(json.waypoints[0].location);
+                    else reject();
+                });
+            });
+        },
+        addCircleData: function (circleDataArray, vectorSource, options) {
+            var featureArray = [];
+            var geom, feature;
+
+            var defaultRadius = 30;
+
+            if (options) {
+                if (options.radius && options.radius >= 1)
+                    defaultRadius = options.radius
+            }
+
+            for (var i = 0; i < circleDataArray.length; i++) {
+                geom = new ol.geom.Circle(
+                    ol.proj.transform([circleDataArray[i].py, circleDataArray[i].px], 'EPSG:4326', 'EPSG:3857'),
+                    defaultRadius
+                );
+                feature = new ol.Feature(geom);
+                feature.set("data", circleDataArray[i]);
+                featureArray.push(feature);
+            }
+
+            vectorSource.addFeatures(featureArray);
+        },
+        createPointFeature: function (coord, vectorSource) {
+            var feature = new ol.Feature({
+                type: 'place',
+                geometry: new ol.geom.Point(ol.proj.fromLonLat(coord))
+            });
+            feature.setStyle(styles.icon);
+            vectorSource.addFeature(feature);
+        },
+        convertPolyLine: function (geometry) {
+            var route = new ol.format.Polyline({
+                factor: 1e5
+            }).readGeometry(geometry, {
+                dataProjection: 'EPSG:4326',
+                featureProjection: 'EPSG:3857'
+            });
+
+            return route;
+        },
+        createRoute: function (route, vectorSource, type, style) {
+            var route = new ol.format.Polyline({
+                factor: 1e5
+            }).readGeometry(route.geometry, {
+                dataProjection: 'EPSG:4326',
+                featureProjection: 'EPSG:3857'
+            });
+            var feature = new ol.Feature({
+                type: type || 'route',
+                geometry: route
+            });
+            feature.setStyle(style);
+            vectorSource.addFeature(feature);
+        },
+        removeLastFeatureFromLayer: function (vectorLayer) {
+            var features = vectorLayer.getFeatures();
+            var f1 = features[features.length - 1];
+            vectorLayer.removeFeature(f1);
+        },
+        to4326: function (coord) {
+            return ol.proj.transform([
+                parseFloat(coord[0]), parseFloat(coord[1])
+            ], 'EPSG:3857', 'EPSG:4326');
+        },
+        FindRoute: function (options, callback) {
+            options.profile = options.profile || 'route';
+            options.alternatives = (options.alternatives != true && options.alternatives != false) ? false : options.alternatives;
+            options.steps = (options.steps != true && options.steps != false) ? false : options.steps;
+            options.geometries = options.geometries || 'geojson';
+            options.overview = options.overview || 'false';
+            options.annotations = (options.annotations != true && options.annotations != false) ? false : options.annotations;
+
+            var coordinates = options.start[0] + "," + options.start[1] + ";" + options.stop[0] + "," + options.stop[1];
+
+            // var path = "/route/v1/" + options.profile + "/" + coordinates + "?alternatives=" + options.alternatives +
+            //     "&steps=" + options.steps + "&geometries=" + options.geometries + "&overview=" + options.overview;
+            var path = "/route/v1/" + options.profile + "/" + coordinates //+ "?geometries=" + options.geometries;
+
+            path = "https://router.project-osrm.org" + path;
+
+            try {
+                $.ajax({
+                    dataType: "json",
+                    url: path,
+                }).done(function (data) {
+                    callback(data);
+                });
+            } catch (err) {
+                console.log(err);
+            }
+        }
+    };
+
+
 });
