@@ -40,6 +40,7 @@ CREATE TABLE public.route (
   name VARCHAR,
   description VARCHAR,
   start VARCHAR,
+  color VARCHAR,
   geojson VARCHAR,
   geom geography,
   total_passenger smallint DEFAULT 0,
