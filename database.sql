@@ -56,6 +56,11 @@ CREATE TABLE public.route (
   is_active boolean DEFAULT true
 );
 
+--alter
+ALTER TABLE station ADD COLUMN sp_distance double precision;
+ALTER TABLE station ADD COLUMN sp_duration double precision;
+ALTER TABLE station ADD COLUMN sp_weight double precision;
+
 
 --helper queries
 

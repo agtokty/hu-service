@@ -79,8 +79,24 @@ function insertStation(data, cb) {
         });
 }
 
-function getAllStations(cb) {
-    database.any('select * from station')
+function updateStationSP(data, cb) {
+    database.none('update station set sp_distance=${sp_distance}, sp_duration=${sp_duration}, sp_weight=${sp_weight}  ' +
+        ' where adi=${adi}', data)
+        .then(function () {
+            cb(null, { result: "ok" })
+        })
+        .catch(function (err) {
+            cb(err);
+        });
+}
+
+
+function getAllStations(cb, whereFilter) {
+    var query = 'select * from station'
+    if (whereFilter)
+        query = query + " " + whereFilter;
+
+    database.any(query)
         .then(function (data) {
             cb(null, data);
         })
@@ -88,6 +104,7 @@ function getAllStations(cb) {
             cb(err)
         });
 }
+
 
 function getAllRoutes(cb) {
     database.any('select * from route')
@@ -175,5 +192,6 @@ module.exports = {
     getStationMinMaxId: getStationMinMaxId,
     updateGeneratedWeights: updateGeneratedWeights,
     getAllRoutes: getAllRoutes,
-    insertRoute: insertRoute
+    insertRoute: insertRoute,
+    updateStationSP: updateStationSP
 };
