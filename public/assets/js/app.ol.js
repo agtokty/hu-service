@@ -19,6 +19,8 @@ $(function () {
         source: new ol.source.OSM(),
     });
 
+
+
     var defaultZoom = 10;
     var defaultLonLatCenter = [32.7615216, 39.908144];
 
@@ -69,9 +71,56 @@ $(function () {
             console.log("dblclick : " + coords);
     });
 
+
+    var firstMoveDone = false;
+
     map.on("moveend", function (event) {
-        // console.log(event);
+        console.log(event);
+
+        if (firstMoveDone) {
+            var v = map.getView()
+            var zoom = v.getZoom()
+            var extent = v.calculateExtent()
+
+            var query = "?ex=" + extent.join() + "&z=" + zoom;
+
+            console.log(query);
+
+            // if (history.pushState) {
+            //     var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + query;
+            //     window.history.pushState({ path: newurl }, '', newurl);
+            // }
+
+            if (history.replaceState) {
+                var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + query;
+                window.history.replaceState({ path: newurl }, '', newurl);
+                history.replaceState({}, '', window.location.pathname + query);
+            }
+        } else {
+            firstMoveDone = true;
+        }
+
+
     });
+
+    function setExtent(extent, zoom) {
+        map.getView().fit(extent, map.getSize())
+        map.getView().setZoom(zoom)
+    }
+
+    var url_string = window.location.href
+    var url = new URL(url_string);
+    var ex = url.searchParams.get("ex");
+    var zoom = url.searchParams.get("z");
+
+    if (ex && zoom) {
+        var ex = ex.split(",");
+        zoom = Number(zoom);
+
+        if (ex.length == 4 && zoom) {
+            setExtent(ex, zoom);
+        }
+    }
 
     //https://jsfiddle.net/jonataswalker/c4qv9afb/
     //Instantiate with some options and add the Control
