@@ -51,7 +51,7 @@ $(function () {
         dataType: "json",
         url: "/api/station",
     }).done(function (data) {
-        utils.addCircleData(data, stationVectorSource, { radius: 85, radius_property : "weight" });
+        utils.addCircleData(data, stationVectorSource, { radius: 85, radius_property: "weight" });
     });
 
     $.ajax({
@@ -100,7 +100,14 @@ $(function () {
             for (var j = 0; j < features.length; j++) {
                 features[j].set("data", routes[i]);
 
-                features[j].setStyle(styles.route);
+
+                var routeStyle = new ol.style.Style({
+                    stroke: new ol.style.Stroke({
+                        width: 6, color: routes[i].color || "#000000"
+                    })
+                });
+
+                features[j].setStyle(routeStyle);
 
                 featuresRoutes.push(features[j]);
             }

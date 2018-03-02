@@ -112,6 +112,15 @@ $(function () {
                     this.ROUTE_RESULTS.push(route1);
 
                     // this.ROUTE_RESULTS_GEOM.push(utils.convertPolyLine(route1.geometry));
+                    var route_color = $("#route_color").val();
+
+                    var styles = {
+                        route: new ol.style.Style({
+                            stroke: new ol.style.Stroke({
+                                width: 6, color: route_color
+                            })
+                        })
+                    };
 
                     utils.createRoute(route1, routeVectorSource, "route", styles.route);
                     utils.createRouteInfo(this.ROUTE_RESULTS, "#route-result");
@@ -206,9 +215,11 @@ $(function () {
                 decimals: 5
             });
             // var resultObj = geojson.writeFeaturesObject(geoArray2, {});
+            var route_color = $("#route_color").val();
 
             var data = {
-                geojson: resultString
+                geojson: resultString,
+                color: route_color
             }
 
             $.ajax({
@@ -222,8 +233,7 @@ $(function () {
                     swal("İşlem Tamamlandı", "Yeni rota eklendi!", "success");
                 },
                 error: function (jqXhr, textStatus, errorThrown) {
-                    if (DEBUG_MODE)
-                        console.log(errorThrown);
+                    console.log(errorThrown);
                     swal("İşlem Tamamlanamadı", "Lütfen sayfayı yeniden yükleyip tekrar deneyiniz!", "error");
                     $("#add_route").prop("disabled", false);
                 }

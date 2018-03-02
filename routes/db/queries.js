@@ -117,8 +117,8 @@ function getAllRoutes(cb) {
 }
 
 function insertRoute(data, cb) {
-    database.none('insert into route(name, description, start, geojson, total_passenger, expected_passenger, is_active)' +
-        ' values(${name}, ${description}, ${start}, ${geojson}, ${total_passenger}, ${expected_passenger}, ${is_active})', data)
+    database.none('insert into route(name, description, start, color, geojson, total_passenger, expected_passenger, is_active)' +
+        ' values(${name}, ${description}, ${start},  ${color}, ${geojson}, ${total_passenger}, ${expected_passenger}, ${is_active})', data)
         .then(function () {
             if (cb)
                 cb(null, { result: "ok" })

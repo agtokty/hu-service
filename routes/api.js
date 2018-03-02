@@ -59,6 +59,7 @@ router.post('/route', function (req, res) {
     postData.start = postData.start || "";
     postData.total_passenger = postData.total_passenger || 0;
     postData.expected_passenger = postData.expected_passenger || 0;
+    postData.color = postData.color || "#000000";
     postData.is_active = (postData.is_active == true || postData.is_active == false) ? postData.is_active : false;
 
     if (!postData.geojson)
@@ -66,9 +67,9 @@ router.post('/route', function (req, res) {
 
     db.insertRoute(postData, function (err, data) {
         if (err) {
-            res.sendStatus(500);
+            return res.sendStatus(500);
         } else {
-            res.sendStatus(201);
+            return res.sendStatus(201);
         }
     });
 
