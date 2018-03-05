@@ -70,6 +70,17 @@ $(function () {
         $("#save-location").prop('disabled', !isEnabled);
     }
 
+
+
+    var SELECTED_STATION = {
+
+    }
+
+    // if (typeof savedData_name != "undefined") {
+    //     SELECTED_STATION
+    // }
+
+
     $("#save-location").on("click", function () {
 
         var coords = startMarker.getGeometry().getCoordinates()
@@ -78,6 +89,11 @@ $(function () {
         var data = {
             lon: LonLat[0],
             lat: LonLat[1]
+        }
+
+        if (SELECTED_STATION) {
+            data.station_name = SELECTED_STATION.station_name;
+            data.station_id = SELECTED_STATION.station_id;
         }
 
         $.ajax({
@@ -98,8 +114,8 @@ $(function () {
                 swal("İşlem Tamamlandı", "Servise biniş noktanız " + resText + "!", "success");
             },
             error: function (jqXhr, textStatus, errorThrown) {
-                if (DEBUG_MODE)
-                    console.log(errorThrown);
+                // if (DEBUG_MODE)
+                console.log(errorThrown);
                 swal("İşlem Tamamlanamadı", "Lütfen sayfayı yeniden yükleyip tekrar deneyiniz!", "error");
             }
         });
@@ -112,28 +128,8 @@ $(function () {
         url: "/api/station/all",
     }).done(function (data) {
         // addStationCircle(data);
-        utils.addCircleData(data, stationVectorSource, { });
+        utils.addCircleData(data, stationVectorSource, {});
     });
-
-    // var addStationCircle = function (duraklar) {
-
-    //     var featuresDuraklar = [];
-    //     var i, geom, feature;
-
-    //     for (i = 0; i < duraklar.length; i++) {
-
-    //         geom = new ol.geom.Circle(
-    //             ol.proj.transform([duraklar[i].py, duraklar[i].px], 'EPSG:4326', 'EPSG:3857'),
-    //             30
-    //         );
-
-    //         feature = new ol.Feature(geom);
-    //         feature.set("data", duraklar[i]);
-    //         featuresDuraklar.push(feature);
-    //     }
-
-    //     stationVectorSource.addFeatures(featuresDuraklar);
-    // }
 
     var select = new ol.interaction.Select({
         condition: ol.events.condition.click
@@ -152,8 +148,15 @@ $(function () {
             var fatures = ff.getArray();
             var data = fatures[0].get("data");
 
-            
-            $("#message-selected-station").html("Seçilen durak : <b>" + data["adi"] + "</b> - " + data["yeri"]);
+            if (data) {
+                SELECTED_STATION.station_id = data.id;
+                SELECTED_STATION.station_name = data.adi;
+
+                var html = "Seçilen durak : <b>" + data["adi"] + "</b> - " + data["yeri"];
+                html += "<br>" + "Toplam Kişi : <b>" + data["weight"] + "</b>";
+
+                $("#message-selected-station").html(html);
+            }
 
             console.log(data);
         }

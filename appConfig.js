@@ -11,7 +11,7 @@ var developmentDatabase = {
 
 if (process.env.NODE_ENV == 'production') {
     
-    process.env.DATABASE_URL = "postgres://obbbtqihcvqgal:899f000423d429d89b05034f05cf195a96d5d010320368b51c35e4ce55a11b15@ec2-54-217-243-160.eu-west-1.compute.amazonaws.com:5432/d6kmo2qrui9du3"
+    // process.env.DATABASE_URL = ""
 
     if (process.env.DATABASE_URL) {
         var myString = process.env.DATABASE_URL;
@@ -26,6 +26,8 @@ if (process.env.NODE_ENV == 'production') {
             developmentDatabase.postgres.database = match[5];
             developmentDatabase.postgres.ssl = true;
         }
+    }else{
+        console.log("process.env.DATABASE_URL empty");
     }
 }
 

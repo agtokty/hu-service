@@ -17,6 +17,7 @@ CREATE TABLE public.location (
   point geography,
   lat REAL,
   lon REAL,
+  station VARCHAR,
   createdAt TIMESTAMP,
   updatedAt TIMESTAMP
 );
@@ -60,6 +61,8 @@ CREATE TABLE public.route (
 ALTER TABLE station ADD COLUMN sp_distance double precision;
 ALTER TABLE station ADD COLUMN sp_duration double precision;
 ALTER TABLE station ADD COLUMN sp_weight double precision;
+
+ALTER TABLE location ADD COLUMN station_name VARCHAR;
 
 
 --helper queries

@@ -30,8 +30,8 @@ function getSingleLocation(code, cb) {
 }
 
 function createLocation(data, cb) {
-    database.none('insert into location(code, note, lat, lon, createdat, updatedat, point)' +
-        ' values(${code}, ${note}, ${lat}, ${lon}, current_timestamp, current_timestamp, ' +
+    database.none('insert into location(code, note, lat, lon, station_name, createdat, updatedat, point)' +
+        ' values(${code}, ${note}, ${lat}, ${lon}, ${station_name}, current_timestamp, current_timestamp, ' +
         ' ST_GeomFromText(\'POINT(${lon} ${lat})\') )', data)
         .then(function () {
             cb(null, { result: "ok" })
@@ -42,7 +42,7 @@ function createLocation(data, cb) {
 }
 
 function updateLocation(data, cb) {
-    database.none('update location set note=${note}, lat=${lat}, lon=${lon}, updatedat=current_timestamp , ' +
+    database.none('update location set note=${note}, lat=${lat}, lon=${lon}, station_name=${station_name}, updatedat=current_timestamp , ' +
         ' point=ST_GeomFromText(\'POINT(${lon} ${lat})\')' +
         ' where id=${id}', data)
         .then(function () {
@@ -82,6 +82,23 @@ function insertStation(data, cb) {
 function updateStationSP(data, cb) {
     database.none('update station set sp_distance=${sp_distance}, sp_duration=${sp_duration}, sp_weight=${sp_weight}  ' +
         ' where adi=${adi}', data)
+        .then(function () {
+            cb(null, { result: "ok" })
+        })
+        .catch(function (err) {
+            cb(err);
+        });
+}
+
+function updateStationWegiht(station_name, isIncrement, cb) {
+
+    if (isIncrement) {
+        var query = 'update station set weight = weight + 1  where adi= \'' +  station_name+ '\'';
+    } else {
+        var query = 'update station set weight = weight - 1  where adi= \'' +  station_name+ '\'';
+    }
+
+    database.none(query, {})
         .then(function () {
             cb(null, { result: "ok" })
         })
@@ -193,5 +210,6 @@ module.exports = {
     updateGeneratedWeights: updateGeneratedWeights,
     getAllRoutes: getAllRoutes,
     insertRoute: insertRoute,
-    updateStationSP: updateStationSP
+    updateStationSP: updateStationSP,
+    updateStationWegiht : updateStationWegiht
 };

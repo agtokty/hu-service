@@ -86,9 +86,11 @@ router.post('/location', function (req, res) {
         if (!data) {
             //create new record
             postData.note = postData.note || "";
+            postData.station_name = postData.station_name || "";
+
             db.createLocation(postData, function (err, data) {
                 if (err) {
-                    res.sendStatus(500);
+                    res.status(500).send(err);
                 } else {
                     res.sendStatus(201);
                 }
@@ -96,17 +98,34 @@ router.post('/location', function (req, res) {
         } else {
             //Update record
             var updateData = data;
+
+            var old_station_name = data.station_name;
+
             updateData.note = postData.note || updateData.note;
             updateData.lat = postData.lat || updateData.lat;
             updateData.lon = postData.lon || updateData.lon;
+            updateData.station_name = postData.station_name || updateData.station_name;
 
             db.updateLocation(updateData, function (err, data) {
                 if (err) {
-                    res.sendStatus(500);
+                    res.status(500).send(err);
                 } else {
                     res.sendStatus(200)
                 }
             })
+
+            db.updateStationWegiht(updateData.station_name, true, function (err) {
+                if (err) {
+                    console.log(err);
+                }
+            })
+
+            if (old_station_name)
+                db.updateStationWegiht(old_station_name, false, function (err) {
+                    if (err) {
+                        console.log(err);
+                    }
+                })
         }
 
     });
