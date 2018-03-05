@@ -93,6 +93,13 @@ router.post('/location', function (req, res) {
                     res.status(500).send(err);
                 } else {
                     res.sendStatus(201);
+
+                    db.updateStationWegiht(postData.station_name, true, function (err) {
+                        if (err) {
+                            console.log(err);
+                        }
+                    })
+
                 }
             });
         } else {
@@ -111,21 +118,22 @@ router.post('/location', function (req, res) {
                     res.status(500).send(err);
                 } else {
                     res.sendStatus(200)
+
+                    db.updateStationWegiht(updateData.station_name, true, function (err) {
+                        if (err) {
+                            console.log(err);
+                        }
+                    })
+        
+                    if (old_station_name)
+                        db.updateStationWegiht(old_station_name, false, function (err) {
+                            if (err) {
+                                console.log(err);
+                            }
+                        })
+
                 }
             })
-
-            db.updateStationWegiht(updateData.station_name, true, function (err) {
-                if (err) {
-                    console.log(err);
-                }
-            })
-
-            if (old_station_name)
-                db.updateStationWegiht(old_station_name, false, function (err) {
-                    if (err) {
-                        console.log(err);
-                    }
-                })
         }
 
     });
