@@ -61,6 +61,7 @@ router.post('/route', function (req, res) {
     postData.expected_passenger = postData.expected_passenger || 0;
     postData.color = postData.color || "#000000";
     postData.is_active = (postData.is_active == true || postData.is_active == false) ? postData.is_active : false;
+    postData.created_by = req.session.user || "api_request";
 
     if (!postData.geojson)
         return res.status(400).send({ error: "geojson can not be empty" });
@@ -124,7 +125,7 @@ router.post('/location', function (req, res) {
                             console.log(err);
                         }
                     })
-        
+
                     if (old_station_name)
                         db.updateStationWegiht(old_station_name, false, function (err) {
                             if (err) {

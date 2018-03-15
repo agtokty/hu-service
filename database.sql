@@ -57,7 +57,9 @@ CREATE TABLE public.route (
   geom geography,
   total_passenger smallint DEFAULT 0,
   expected_passenger smallint DEFAULT 0,
-  is_active boolean DEFAULT true
+  is_active boolean DEFAULT true,
+  created_by VARCHAR,
+  created_at TIMESTAMP
 );
 
 --alter
@@ -67,6 +69,8 @@ ALTER TABLE station ADD COLUMN sp_weight double precision;
 
 ALTER TABLE location ADD COLUMN station_name VARCHAR;
 
+ALTER TABLE public.route ADD COLUMN created_by VARCHAR;
+ALTER TABLE public.route ADD COLUMN created_at TIMESTAMP;
 
 --helper queries
 

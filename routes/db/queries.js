@@ -93,9 +93,9 @@ function updateStationSP(data, cb) {
 function updateStationWegiht(station_name, isIncrement, cb) {
 
     if (isIncrement) {
-        var query = 'update station set weight = weight + 1  where adi= \'' +  station_name+ '\'';
+        var query = 'update station set weight = weight + 1  where adi= \'' + station_name + '\'';
     } else {
-        var query = 'update station set weight = weight - 1  where adi= \'' +  station_name+ '\'';
+        var query = 'update station set weight = weight - 1  where adi= \'' + station_name + '\'';
     }
 
     database.none(query, {})
@@ -134,8 +134,9 @@ function getAllRoutes(cb) {
 }
 
 function insertRoute(data, cb) {
-    database.none('insert into route(name, description, start, color, geojson, total_passenger, expected_passenger, is_active)' +
-        ' values(${name}, ${description}, ${start},  ${color}, ${geojson}, ${total_passenger}, ${expected_passenger}, ${is_active})', data)
+    database.none('insert into route(name, description, start, color, geojson, total_passenger, expected_passenger, is_active, created_by ,created_at)' +
+        ' values(${name}, ${description}, ${start},  ${color}, ${geojson}, ${total_passenger}, ' +
+        '${expected_passenger}, ${is_active}, ${created_by}, current_timestamp)', data)
         .then(function () {
             if (cb)
                 cb(null, { result: "ok" })
@@ -211,5 +212,5 @@ module.exports = {
     getAllRoutes: getAllRoutes,
     insertRoute: insertRoute,
     updateStationSP: updateStationSP,
-    updateStationWegiht : updateStationWegiht
+    updateStationWegiht: updateStationWegiht
 };
