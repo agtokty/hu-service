@@ -33,6 +33,9 @@ CREATE TABLE public.station (
   py REAL,
   weight smallint DEFAULT 0,
   is_active boolean DEFAULT false,
+  sp_distance double precision,
+  sp_duration double precision,
+  sp_weight double precision,
   CONSTRAINT name_unq UNIQUE (adi)
 );
 
@@ -40,7 +43,7 @@ CREATE TABLE public.station_distance (
   adi VARCHAR,
   distance double precision,
   duration double precision,
-  weight  double precision
+  weight  double precision,
   CONSTRAINT name_unq UNIQUE (adi)
 );
 
