@@ -270,7 +270,7 @@ $(function () {
 
             // var path = "/route/v1/" + options.profile + "/" + coordinates + "?alternatives=" + options.alternatives +
             //     "&steps=" + options.steps + "&geometries=" + options.geometries + "&overview=" + options.overview;
-            var path = "/route/v1/" + options.profile + "/" + coordinates //+ "?geometries=" + options.geometries;
+            var path = "/route/v1/" + options.profile + "/" + coordinates + "?overview=" + options.overview;
 
             path = "https://router.project-osrm.org" + path;
 

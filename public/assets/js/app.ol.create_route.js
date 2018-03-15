@@ -1,5 +1,30 @@
 $(function () {
 
+    utils = window.utils || {};
+
+    utils.createRouteInfo = function (route, selector) {
+        var distance = 0, duration = 0, weight = 0;
+        if (route instanceof Array) {
+            for (var i = 0; i < route.length; i++) {
+                const element = route[i];
+                distance += element.distance;
+                duration += element.duration;
+                weight += element.weight;
+            }
+        } else {
+            distance = route.distance;
+            duration = route.duration;
+            weight = route.weight;
+        }
+
+        var distanceElement = $("<p>").text("Distance : " + distance);
+        var durationElement = $("<p>").text("Duration : " + duration);
+        var weightElement = $("<p>").text("Weight : " + weight);
+
+        $(selector).empty();
+        $(selector).append(distanceElement).append(durationElement).append(weightElement);
+    };
+
     var defaultZoom = 10;
     var defaultLonLatCenter = [32.7615216, 39.908144];
 
@@ -53,26 +78,6 @@ $(function () {
         utils.addCircleData(data, stationVectorSource, { radius: 85, radius_property: "weight" });
     });
 
-    // var addStationCircle = function (duraklar) {
-
-    //     var featuresDuraklar = [];
-    //     var i, geom, feature;
-
-    //     for (i = 0; i < duraklar.length; i++) {
-
-    //         geom = new ol.geom.Circle(
-    //             ol.proj.transform([duraklar[i].py, duraklar[i].px], 'EPSG:4326', 'EPSG:3857'),
-    //             30
-    //         );
-
-    //         feature = new ol.Feature(geom);
-    //         feature.set("data", duraklar[i]);
-    //         featuresDuraklar.push(feature);
-    //     }
-
-    //     stationVectorSource.addFeatures(featuresDuraklar);
-    // }
-
     //Find and draw route
     var SELECT_FOR = {
         START: "start",
@@ -95,12 +100,13 @@ $(function () {
             var STOP = this.ROUTE_ARRAY[this.ROUTE_ARRAY.length - 1];
 
             this.profile = $("#route-type").val() || this.profile;
-            FindRoute({
+            utils.FindRoute({
                 profile: "route",
                 alternatives: this.alternatives,
                 steps: this.steps,
                 start: START,
-                stop: STOP
+                stop: STOP,
+                overview: "full"
             }, function (result) {
 
                 if (!result)
@@ -268,6 +274,8 @@ $(function () {
         }
     });
 
+
+    /*
     var FindRoute = function (options, callback) {
 
         options.profile = options.profile || 'route';
@@ -296,28 +304,8 @@ $(function () {
             console.log(err);
         }
     }
+*/
 
-    utils.createRouteInfo = function (route, selector) {
-        var distance = 0, duration = 0, weight = 0;
-        if (route instanceof Array) {
-            for (var i = 0; i < route.length; i++) {
-                const element = route[i];
-                distance += element.distance;
-                duration += element.duration;
-                weight += element.weight;
-            }
-        } else {
-            distance = route.distance;
-            duration = route.duration;
-            weight = route.weight;
-        }
 
-        var distanceElement = $("<p>").text("Distance : " + distance);
-        var durationElement = $("<p>").text("Duration : " + duration);
-        var weightElement = $("<p>").text("Weight : " + weight);
-
-        $(selector).empty();
-        $(selector).append(distanceElement).append(durationElement).append(weightElement);
-    };
 
 })

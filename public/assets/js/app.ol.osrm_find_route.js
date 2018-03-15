@@ -122,7 +122,8 @@ $(function () {
                 alternatives: this.alternatives,
                 steps: this.steps,
                 start: this.START,
-                stop: this.STOP
+                stop: this.STOP,
+                overview : "full"
             }, function (result) {
 
                 if (!result)
