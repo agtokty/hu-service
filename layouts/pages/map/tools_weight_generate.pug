@@ -17,11 +17,20 @@ block content
 				.input-group.input-group-sm.p-t-5
 					span.input-group-btn(title="Başlangıç noktası seç")
 						button.btn.btn-primary.start-stop-btn(type='button' selectFor="start") Toplam Ağırlık
-					input.form-control#total-weight.start-stop(type="number" value="1500" selectFor="start")
+					//- input.form-control#total-weight.start-stop(type="number" value="1500" selectFor="start")
+					select.form-control#total-weight(name="total-weight")
+						option(value="500") 500
+						option(value="700") 700
+						option(value="900") 900
+						option(value="1000") 1000
+						option(value="1200") 1200
+						option(value="1300") 1300
+						option(value="1400") 1400
+						option(value="1500") 1500
 				.input-group.input-group-sm.p-t-5
 					.input-group-btn(title="Bitiş noktası seç")
 						button.btn.btn-danger.start-stop-btn(type='button' selectFor="stop") Durak Sayısı
-					input.form-control#station-count.start-stop(type="number" value="500"  selectFor="stop")
+					input.form-control#station-count.start-stop(type="number" value="200" step="10" selectFor="stop")
 				hr
 				#route-result
 				button.btn.btn-info#start-process(type="clear") Başlat
