@@ -21,13 +21,17 @@ $(function () {
 
     map.getLayers().push(stationVectorLayer);
 
+
+    var DATA = null;
+
     //durakları çek
     $.ajax({
         dataType: "json",
         url: "/api/station",
     }).done(function (data) {
+        DATA = data;
         // addStationCircle(data);
-        utils.addCircleData(data, stationVectorSource, { radius: 85, radius_property : "weight" });
+        utils.addCircleData(data, stationVectorSource, { radius: 85, radius_property: "weight" });
     });
 
     $("#start-process").on("click", function () {
@@ -72,5 +76,9 @@ $(function () {
         });
 
     })
+
+    function PickRandomNStation(count){
+
+    }
 
 })

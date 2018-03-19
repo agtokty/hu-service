@@ -10,6 +10,16 @@ $(function () {
         })
     });
 
+    var circleStyleMaster = new ol.style.Style({
+        stroke: new ol.style.Stroke({
+            color: 'rgba(255, 0, 0, 0.4)',
+            width: 3
+        }),
+        fill: new ol.style.Fill({
+            color: 'rgba(255, 0, 0, 0.1)'
+        })
+    });
+
     var selected = ol.proj.fromLonLat([32.7615216, 39.908144]);
     var defaultZoom = 10;
     var defaultLonLatCenter = [32.7615216, 39.908144];
@@ -128,7 +138,14 @@ $(function () {
         url: "/api/station/all",
     }).done(function (data) {
         // addStationCircle(data);
-        utils.addCircleData(data, stationVectorSource, {});
+        utils.addCircleData(data, stationVectorSource, {
+            getStyle: function (point) {
+                if (point && point.is_master == true)
+                    return circleStyleMaster;
+                else
+                    return null;
+            }
+        });
     });
 
     var select = new ol.interaction.Select({

@@ -211,6 +211,16 @@ $(function () {
                 );
                 feature = new ol.Feature(geom);
                 feature.set("data", circleDataArray[i]);
+
+                if (options && options.style)
+                    feature.setStyle(style);
+
+                if (options && options.getStyle && typeof options.getStyle == "function") {
+                    if (options.getStyle(circleDataArray[i]) != null) {
+                        feature.setStyle(options.getStyle(circleDataArray[i]));
+                    }
+                }
+
                 featureArray.push(feature);
             }
 
