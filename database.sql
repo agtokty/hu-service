@@ -36,6 +36,7 @@ CREATE TABLE public.station (
   sp_distance double precision,
   sp_duration double precision,
   sp_weight double precision,
+  is_master boolean DEFAULT false,
   CONSTRAINT name_unq UNIQUE (adi)
 );
 

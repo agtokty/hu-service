@@ -9,6 +9,17 @@ var options = {
 var pgp = require('pg-promise')(options);
 var database = pgp(CONFIG.database.postgres);
 
+function query(QUERY, cb) {
+    database.result(QUERY)
+        .then(function (result) {
+            cb(null, "OK");
+        })
+        .catch(function (err) {
+            cb(err);
+        });
+}
+
+
 function getAllLocations(cb) {
     database.any('select * from location')
         .then(function (data) {
@@ -196,8 +207,27 @@ function updateGeneratedWeights(updates, cb) {
 
 }
 
+function updateMasterInfo(updates, cb) {
+
+    // var updates = [{ id: 1, weight: 23 }, { id: 4, weight: 233 }, { id: 5, weight: 523 }];
+    database.tx(t => {
+        var queries = updates.map(u => {
+            return t.none('update station set is_master=${is_master}, is_active=true where id = $(id)', u);
+        });
+        return t.batch(queries);
+    })
+        .then(data => {
+            cb(null, "ok")
+        })
+        .catch(error => {
+            cb(error)
+        });
+
+}
+
 
 module.exports = {
+    query: query,
     getAllLocations: getAllLocations,
     getSingleLocation: getSingleLocation,
     createLocation: createLocation,
@@ -212,5 +242,6 @@ module.exports = {
     getAllRoutes: getAllRoutes,
     insertRoute: insertRoute,
     updateStationSP: updateStationSP,
-    updateStationWegiht: updateStationWegiht
+    updateStationWegiht: updateStationWegiht,
+    updateMasterInfo: updateMasterInfo
 };
