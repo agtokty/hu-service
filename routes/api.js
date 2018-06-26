@@ -35,7 +35,7 @@ router.get('/station/all', function (req, res) {
         } else {
             res.send(data);
         }
-    })
+    }," where is_master = true ")
 });
 
 router.get('/route/all', function (req, res) {
