@@ -3,9 +3,9 @@ var developmentDatabase = {
     postgres: {
         host: 'localhost',
         port: 5432,
-        database: 'huservice',
+        database: 'huservice1',
         user: 'postgres',
-        password: 'postgres'
+        password: '12345Aa'
     }
 }
 

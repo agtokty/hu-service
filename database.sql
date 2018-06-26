@@ -37,6 +37,7 @@ CREATE TABLE public.station (
   sp_duration double precision,
   sp_weight double precision,
   is_master boolean DEFAULT false,
+  region smallint DEFAULT 0,
   CONSTRAINT name_unq UNIQUE (adi)
 );
 
@@ -45,7 +46,7 @@ CREATE TABLE public.station_distance (
   distance double precision,
   duration double precision,
   weight  double precision,
-  CONSTRAINT name_unq UNIQUE (adi)
+  CONSTRAINT adi_unq UNIQUE (adi)
 );
 
 CREATE TABLE public.route (
@@ -71,3 +72,15 @@ select sum(weight) , count(*) from station where is_active=true
 
 -- make stations inactive
 update station set weight=0, is_active=false
+
+
+
+SELECT *
+from station where point && ST_MakeEnvelope(32.65781864176159,39.812199574374745,32.72188583831257,39.89100734156165 ,4326)
+
+UPDATE station SET region = 1 
+ where point && ST_MakeEnvelope(32.65781864176159,39.812199574374745,32.72188583831257,39.89100734156165 ,4326);
+
+
+
+--UPDATE station SET point = ST_MakePoint(py, px);
