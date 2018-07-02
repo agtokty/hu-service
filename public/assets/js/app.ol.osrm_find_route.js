@@ -74,7 +74,7 @@ $(function () {
     //durakları çek
     $.ajax({
         dataType: "json",
-        url: "/api/station",
+        url: "/api/station/master",
     }).done(function (data) {
         // addStationCircle(data);
         utils.addCircleData(data, stationVectorSource, { radius: 85, radius_property: "weight" });

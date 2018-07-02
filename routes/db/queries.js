@@ -180,13 +180,15 @@ function getAllActiveStations(cb) {
 }
 
 function resetAllStations(cb) {
-    database.none('update station set weight=0, is_active=false ', {})
-        .then(function () {
-            cb(null, { result: "ok" })
-        })
-        .catch(function (err) {
-            cb(err);
-        });
+    return new Promise((resolve, reject) => {
+        database.none('update station set weight=0, is_active=false ', {})
+            .then(function () {
+                resolve({ result: "ok" })
+            })
+            .catch(function (err) {
+                reject(err);
+            });
+    })
 }
 
 function updateGeneratedWeights(updates, cb) {

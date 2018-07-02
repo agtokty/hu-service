@@ -2,6 +2,13 @@ var db = require('./../routes/db/queries');
 var geodist = require('geodist');
 var util = require('./util');
 
+/**
+ * Bu kodun amacı, birbirine çok yakın olan durakların birleştirilmesidir.
+ * Kullanılan parametreler;
+ *  - varış noktasına olan rota uzaklıkları
+ *  - yakınlık olarak kabul edilecek olan mesafe (metre değeri olarak -r parametresi)
+ */
+
 //usage :  node .\tools\clearData.js -r 1000
 
 //meter
@@ -12,7 +19,9 @@ RADIUS = util.getParam(process.argv, "-r", 500);
 var STATIONS = [];
 var STATIONS_OBJECT = {};
 
-db.query('update station set is_master = null', function (err, res) {
+
+// tüm istasyonların is_master değeri false yapılır
+db.query('update station set is_master = FALSE', function (err, res) {
 
     if (err) {
         return console.log("can not reset station table!");
@@ -30,7 +39,7 @@ db.query('update station set is_master = null', function (err, res) {
         for (const key in STATIONS_OBJECT) {
             if (STATIONS_OBJECT.hasOwnProperty(key)) {
                 const point = STATIONS_OBJECT[key];
-                if (typeof (point.is_master) == 'undefined' || point.is_master == null) {
+                if (point.is_used === undefined || point.is_used === false) {
                     selectMasterStation(point);
                 }
             }
@@ -43,7 +52,7 @@ db.query('update station set is_master = null', function (err, res) {
             if (STATIONS_OBJECT.hasOwnProperty(key)) {
                 const point = STATIONS_OBJECT[key];
 
-                if (typeof (point.is_master) !== 'undefined' && point.is_master == true) {
+                if (point.is_master == true) {
                     //console.log(count++ + " " + point.adi);
                     RESULT.push(point);
                 }
@@ -93,7 +102,7 @@ function selectMasterStation(node) {
 
     var neighbors = [];
 
-
+    // verilen noktanın RADIUS uzaklığındaki komşuları bulunur
     for (const key in STATIONS_OBJECT) {
         if (STATIONS_OBJECT.hasOwnProperty(key)) {
             const point = STATIONS_OBJECT[key];
@@ -109,11 +118,13 @@ function selectMasterStation(node) {
     }
 
 
+    STATIONS_OBJECT[node.adi].is_used = true;
+
     if (neighbors.length == 0) {
-
+        //bu noktanın komşusu yoksa kendi başına master olur
         STATIONS_OBJECT[node.adi].is_master = true;
-
     } else {
+        //komşuları ile birlikte bu nokta dahil olmak üzere merkeze en yakın nokta master olarak kabul edilir.
         neighbors.push(node);
 
         var nearest_point = neighbors[0];
@@ -126,6 +137,7 @@ function selectMasterStation(node) {
             }
 
             STATIONS_OBJECT[element.adi].is_master = false;
+            STATIONS_OBJECT[element.adi].is_used = true;
         }
 
         STATIONS_OBJECT[nearest_point.adi].is_master = true;

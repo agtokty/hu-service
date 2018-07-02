@@ -27,7 +27,7 @@ $(function () {
     //durakları çek
     $.ajax({
         dataType: "json",
-        url: "/api/station",
+        url: "/api/station/master",
     }).done(function (data) {
         DATA = data;
         // addStationCircle(data);

@@ -16,15 +16,26 @@ router.get('/location', function (req, res) {
     })
 });
 
-router.get('/station', function (req, res) {
+router.get('/station/active', function (req, res) {
 
-    db.getAllActiveStations(function (err, data) {
+    db.getAllStations(function (err, data) {
         if (err) {
             res.sendStatus(500);
         } else {
             res.send(data);
         }
-    })
+    }," where is_active = true")
+});
+
+router.get('/station/master', function (req, res) {
+
+    db.getAllStations(function (err, data) {
+        if (err) {
+            res.sendStatus(500);
+        } else {
+            res.send(data);
+        }
+    }," where is_master = true")
 });
 
 router.get('/station/all', function (req, res) {
@@ -35,7 +46,7 @@ router.get('/station/all', function (req, res) {
         } else {
             res.send(data);
         }
-    }," where is_master = true ")
+    })
 });
 
 router.get('/route/all', function (req, res) {
@@ -143,48 +154,81 @@ router.post('/location', function (req, res) {
 
 
 router.post('/tools/generate_weight', function (req, res) {
-    //TODO - validate data
-
     var postData = req.body;
     postData.code = util.getHash(req.session.user);
 
-    db.resetAllStations(function (err, data) {
-        if (err) {
-            return res.status(500).send({ message: "can not reset all stations", error: err });
-        }
+    db.resetAllStations()
+        .then((data) => {
+            db.getStationMinMaxId(function (err, data) {
+                if (err) return res.status(500).send({ message: "can not get min max id", error: err });
 
-        db.getStationMinMaxId(function (err, data) {
-            if (err) {
-                return res.status(500).send({ message: "can not reset all stations", error: err });
-            }
+                var resultIds = randomNumberPopulater.createNRondomNumber(data[0].min, data[0].max, postData.count, true);
+                var resultData = randomNumberPopulater.createRandomNumbers(postData.count, postData.weight, 5, []);
 
-            var resultIds = randomNumberPopulater.createNRondomNumber(data[0].min, data[0].max, postData.count, true);
-            var resultData = randomNumberPopulater.createRandomNumbers(postData.count, postData.weight, 5, []);
+                var updates = [];
 
-            var updates = [];
+                for (var i = 0; i < resultIds.length; i++) {
+                    updates.push({
+                        id: resultIds[i],
+                        weight: Number(resultData[i])
+                    })
+                }
 
-            for (var i = 0; i < resultIds.length; i++) {
-                updates.push({
-                    id: resultIds[i],
-                    weight: Number(resultData[i])
+                db.updateGeneratedWeights(updates, function (err, data) {
+                    console.log(err)
+                    console.log(data)
                 })
-            }
 
-            db.updateGeneratedWeights(updates, function (err, data) {
-                console.log(err)
-                console.log(data)
-                // if (err) {
-                //     return res.status(500).send({ message: "can not reset all stations", error: err });
-                // }
-                // res.status(200).send({ data: postData,result: data });
+                res.status(200).send({ data: postData, result: {} });
+
             })
-
-            res.status(200).send({ data: postData, result: {} });
-
         })
-    });
-
+        .catch((err) => {
+            return res.status(500).send({ message: "can not reset all stations", error: err });
+        })
 });
+
+router.post('/tools/generate_weight_for_masters', function (req, res) {
+    var postData = req.body;
+    postData.code = util.getHash(req.session.user);
+
+    db.resetAllStations()
+        .then((data) => {
+
+            db.getAllStations(function (master_points, err) {
+                if (err) return res.status(500).send({ message: "can not get master points", error: err });
+
+                var resultIds = [];
+                for (let index = 0; index < master_points.length; index++) {
+                    const element = master_points[index];
+                    resultIds.push(element.id)
+                }
+
+                var resultData = randomNumberPopulater.createRandomNumbers(resultIds.length, postData.weight, 5, []);
+                var updates = [];
+
+                for (var i = 0; i < resultIds.length; i++) {
+                    updates.push({
+                        id: resultIds[i],
+                        weight: Number(resultData[i])
+                    })
+                }
+
+                db.updateGeneratedWeights(updates, function (err, data) {
+                    console.log(err)
+                    console.log(data)
+                })
+
+                res.status(200).send({ data: postData, result: {} });
+
+            }, " where is_master = true")
+ 
+        })
+        .catch((err) => {
+            return res.status(500).send({ message: "can not reset all stations", error: err });
+        })
+});
+
 
 
 module.exports = router;

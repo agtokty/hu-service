@@ -75,7 +75,7 @@ $(function () {
     var firstMoveDone = false;
 
     map.on("moveend", function (event) {
-        console.log(event);
+        //console.log(event);
 
         if (firstMoveDone) {
             var v = map.getView()
@@ -84,7 +84,7 @@ $(function () {
 
             var query = "?ex=" + extent.join() + "&z=" + zoom;
 
-            console.log(query);
+            //console.log(query);
 
             // if (history.pushState) {
             //     var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + query;
