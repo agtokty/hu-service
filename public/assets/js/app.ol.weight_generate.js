@@ -34,6 +34,12 @@ $(function () {
         utils.addCircleData(data, stationVectorSource, { radius: 85, radius_property: "weight" });
     });
 
+
+    $("#use-master").on("change", function () {
+        var usemaster = document.getElementById("use-master").checked
+        $("#station-count").prop("disabled", usemaster);
+    })
+
     $("#start-process").on("click", function () {
 
         var weight = $("#total-weight").val();
@@ -46,8 +52,12 @@ $(function () {
 
         var data = {
             weight: weight,
-            count: count
+            count: count,
+            use_masters: document.getElementById("use-master").checked
         };
+
+        $("#start-process").text("lütfen bekleyiniz");
+        $("#control-buttons button").prop("disabled",true);
 
         $.ajax({
             url: '/api/tools/generate_weight',
@@ -57,8 +67,6 @@ $(function () {
             success: function (data, textStatus, jQxhr) {
 
                 console.log(data);
-
-                $("#start-process").remove();
 
                 var info = {
                     title: "İşlem Tamamlandı",
@@ -77,7 +85,46 @@ $(function () {
 
     })
 
-    function PickRandomNStation(count){
+    $("#clear-data-process").on("click", function () {
+
+        var radius = prompt("Birleştime işlemi için yakınlık yarıçapı değeri giriniz ", "500");
+        var radius = parseInt(radius);
+
+        if (radius === NaN)
+            radius = 500;
+
+        var data = {
+            radius: radius,
+        };
+
+        $("#clear-data-process").text("lütfen bekleyiniz");
+        $("#control-buttons button").prop("disabled",true);
+
+        $.ajax({
+            url: '/api/tools/clear',
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (data, textStatus, jQxhr) {
+
+                console.log(data);
+                var info = {
+                    title: "İşlem Tamamlandı",
+                    text: "Yakın duraklar birleştirildi. " + (data.message || ""),
+                    type: "success"
+                };
+                swal(info, function () {
+                    location.reload();
+                });
+            },
+            error: function (jqXhr, textStatus, errorThrown) {
+                console.log(errorThrown);
+                swal("İşlem Tamamlanamadı", "Lütfen sayfayı yeniden yükleyip tekrar deneyiniz!", "error");
+            }
+        });
+    })
+
+    function PickRandomNStation(count) {
 
     }
 

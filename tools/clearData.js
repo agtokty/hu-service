@@ -19,60 +19,55 @@ RADIUS = util.getParam(process.argv, "-r", 500);
 var STATIONS = [];
 var STATIONS_OBJECT = {};
 
+function clear(_radius) {
+    RADIUS = _radius || RADIUS
 
-// tüm istasyonların is_master değeri false yapılır
-db.query('update station set is_master = FALSE', function (err, res) {
+    return new Promise((resolve, reject) => {
+        // tüm istasyonların is_master değeri false yapılır
+        db.query('update station set is_master = FALSE', function (err, res) {
 
-    if (err) {
-        return console.log("can not reset station table!");
-    }
-
-    db.getAllStations(function (err, stations) {
-
-        if (err)
-            return console.log("ERROR 1");
-
-        STATIONS = stations;
-
-        STATIONS_OBJECT = convertObjectByProperty(stations, "adi");
-
-        for (const key in STATIONS_OBJECT) {
-            if (STATIONS_OBJECT.hasOwnProperty(key)) {
-                const point = STATIONS_OBJECT[key];
-                if (point.is_used === undefined || point.is_used === false) {
-                    selectMasterStation(point);
-                }
+            if (err) {
+                reject("can not reset station table!");
             }
-        }
 
-        var RESULT = [];
+            db.getAllStations(function (err, stations) {
+                if (err)
+                    reject("ERROR 1");
 
-        var count = 0;
-        for (const key in STATIONS_OBJECT) {
-            if (STATIONS_OBJECT.hasOwnProperty(key)) {
-                const point = STATIONS_OBJECT[key];
+                STATIONS = stations;
+                STATIONS_OBJECT = convertObjectByProperty(stations, "adi");
 
-                if (point.is_master == true) {
-                    //console.log(count++ + " " + point.adi);
-                    RESULT.push(point);
+                for (const key in STATIONS_OBJECT) {
+                    if (STATIONS_OBJECT.hasOwnProperty(key)) {
+                        const point = STATIONS_OBJECT[key];
+                        if (point.is_used === undefined || point.is_used === false)
+                            selectMasterStation(point);
+                    }
                 }
-            }
-        }
 
+                var RESULT = [];
+                var count = 0;
+                for (const key in STATIONS_OBJECT) {
+                    if (STATIONS_OBJECT.hasOwnProperty(key)) {
+                        const point = STATIONS_OBJECT[key];
+                        if (point.is_master == true)
+                            RESULT.push(point);
+                    }
+                }
 
-        db.updateMasterInfo(RESULT, function (err, res) {
+                db.updateMasterInfo(RESULT, function (err, res) {
+                    if (err)
+                        reject("err : " + err);
 
-            if (err)
-                return console.log("err : " + err);
+                    console.log("TOTAL MASTER STATION : " + RESULT.length);
+                    console.log("res : " + res);
+                    resolve("TOTAL MASTER STATION : " + RESULT.length)
+                })
 
-            console.log("TOTAL MASTER STATION : " + RESULT.length);
-            console.log("res : " + res);
-
+            });
         })
-
-    });
-
-})
+    })
+}
 
 function convertObjectByProperty(data, propery) {
     var result = {};
@@ -146,5 +141,12 @@ function selectMasterStation(node) {
     //console.log(neighbors);
 }
 
+clear(RADIUS).then((data) => {
+    console.log("completed : " + data)
+}).catch((err) => {
+    console.log("error : " + err)
+})
 
-
+module.exports = {
+    clear: clear
+}

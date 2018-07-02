@@ -16,7 +16,7 @@ block content
 			#floating-panel-right
 				.input-group.input-group-sm.p-t-5
 					span.input-group-btn(title="Başlangıç noktası seç")
-						button.btn.btn-primary.start-stop-btn(type='button' selectFor="start") Toplam Ağırlık
+						button.btn.btn-primary.start-stop-btn(type='button' selectFor="start" title="Toplam Ağırlık") Toplam
 					//- input.form-control#total-weight.start-stop(type="number" value="1500" selectFor="start")
 					select.form-control#total-weight(name="total-weight")
 						option(value="500") 500
@@ -28,12 +28,18 @@ block content
 						option(value="1400") 1400
 						option(value="1500") 1500
 				.input-group.input-group-sm.p-t-5
+					label
+						input#use-master(type="checkbox" checked)
+						| Güncel Durakları Kullan				
+				.input-group.input-group-sm.p-t-5
 					.input-group-btn(title="Bitiş noktası seç")
-						button.btn.btn-danger.start-stop-btn(type='button' selectFor="stop") Durak Sayısı
-					input.form-control#station-count.start-stop(type="number" value="200" step="10" selectFor="stop")
+						button.btn.btn-danger.start-stop-btn(type='button' selectFor="stop" title="Durak Sayısı") #Durak
+					input.form-control#station-count.start-stop(type="number" value="200" step="10" selectFor="stop" disabled)
 				hr
 				#route-result
-				button.btn.btn-info#start-process(type="clear") Başlat
+				div#control-buttons
+					button.btn.btn-info.btn-sm.mr-1#start-process(type="clear") Başlat
+					button.btn.btn-warning.btn-sm#clear-data-process(type="clear") Durak Birleştir**
 		#map.map
 
 block child_pagecss
