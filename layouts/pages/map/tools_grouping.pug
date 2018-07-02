@@ -16,17 +16,13 @@ block content
 			#floating-panel-right
 				.input-group.input-group-sm.p-t-5
 					span.input-group-btn
-						button.btn.btn-primary.start-stop-btn(type='button' selectFor="start" title="Toplam Ağırlık") Toplam
-					//- input.form-control#total-weight.start-stop(type="number" value="1500" selectFor="start")
-					select.form-control#total-weight(name="total-weight")
-						option(value="500") 500
-						option(value="700") 700
-						option(value="900") 900
-						option(value="1000") 1000
-						option(value="1200") 1200
-						option(value="1300") 1300
-						option(value="1400") 1400
-						option(value="1500") 1500
+						button.btn.btn-primary(type='button' selectFor="car-capacity" title="Araç Kapasitesi") Kapasite
+					select.form-control#total-weight(name="car-capacity")
+						option(value="15") 15
+						option(value="25") 25
+						option(value="35") 35
+						option(value="40") 40
+						option(value="50") 50
 				.input-group.input-group-sm.p-t-5
 					label
 						input#use-master(type="checkbox" checked)

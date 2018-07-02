@@ -19,6 +19,14 @@ router.get('/generate-weight', function (req, res) {
     res.render('pages/map/tools_weight_generate', pugOptions);
 });
 
+router.get('/group', function (req, res) {
+    var pugOptions = req.pugOptions;
+    pugOptions.pageTitle = "Durak gruplama sayfası";
+    pugOptions.saved = false;
+
+    res.render('pages/map/tools_grouping', pugOptions);
+});
+
 router.get('/create-route', function (req, res) {
     var pugOptions = req.pugOptions;
     pugOptions.pageTitle = "Rota Oluştur";
