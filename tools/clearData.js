@@ -141,11 +141,13 @@ function selectMasterStation(node) {
     //console.log(neighbors);
 }
 
-clear(RADIUS).then((data) => {
-    console.log("completed : " + data)
-}).catch((err) => {
-    console.log("error : " + err)
-})
+if (util.getParam(process.argv, "-r", 0) !== null) {
+    clear(RADIUS).then((data) => {
+        console.log("completed : " + data)
+    }).catch((err) => {
+        console.log("error : " + err)
+    })
+}
 
 module.exports = {
     clear: clear
