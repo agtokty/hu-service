@@ -1,5 +1,5 @@
 {
-  "name": "hu-servis-saatleri",
+  "name": "hu-service",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
@@ -10,11 +10,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://agitoktay@bitbucket.org/agitoktay/geohack2017.git"
+    "url": "git+https://github.com/agtokty/hu-service.git"
   },
   "author": "agitoktay",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/agitoktay/geohack2017#readme",
+  "homepage": "https://github.com/agtokty/hu-service",
   "dependencies": {
     "bluebird": "^3.5.1",
     "body-parser": "^1.18.1",
